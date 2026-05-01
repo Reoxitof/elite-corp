@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Elite Corp. — Event Planning & Services</title>
+  <title>Candidature — Chef de la Securite | Elite Corp.</title>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <style>
@@ -18,20 +18,19 @@
     .nav-links{display:flex;gap:28px;list-style:none;}
     .nav-links a{color:var(--white-dim);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:color 0.2s;}
     .nav-links a:hover{color:var(--gold);}
-    
     @media(max-width:768px){nav{padding:14px 20px;}.nav-links{display:none;}}
-    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;background:radial-gradient(ellipse at top,rgba(201,168,76,0.12),transparent 60%),radial-gradient(ellipse at bottom,rgba(201,168,76,0.06),transparent 50%),var(--bg);position:relative;overflow:hidden;}
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;background:radial-gradient(ellipse at top,rgba(201,168,76,0.14),transparent 60%),var(--bg);position:relative;overflow:hidden;}
     .hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);background-size:50px 50px;}
     .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:999px;border:1px solid var(--border);background:rgba(201,168,76,0.08);color:var(--gold);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
-    .hero h1{font-family:'Anton',sans-serif;font-size:clamp(60px,10vw,120px);letter-spacing:8px;line-height:1;color:var(--white);text-shadow:0 0 60px rgba(201,168,76,0.3);}
+    .hero h1{font-family:'Anton',sans-serif;font-size:clamp(48px,9vw,110px);letter-spacing:6px;line-height:1;color:var(--white);text-shadow:0 0 80px rgba(201,168,76,0.35);}
     .hero h1 span{color:var(--gold);}
-    .hero-sub{font-size:14px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin:12px 0 8px;}
+    .hero-sub{font-size:14px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin:14px 0 6px;}
     .hero-location{font-size:11px;letter-spacing:3px;color:var(--white-dim);margin-bottom:24px;}
     .hero-divider{width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 28px;}
-    .hero-text{font-size:15px;color:var(--white-dim);max-width:560px;line-height:1.7;margin-bottom:40px;}
+    .hero-text{font-size:15px;color:var(--white-dim);max-width:580px;line-height:1.8;margin-bottom:40px;}
     .hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
     .btn-gold{padding:14px 32px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:10px;color:#000;font-family:'Inter',sans-serif;font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.2s;box-shadow:0 8px 24px rgba(201,168,76,0.3);display:inline-flex;align-items:center;gap:8px;}
-    .btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.4);}
+    .btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.45);}
     .btn-outline{padding:14px 32px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--gold);font-family:'Inter',sans-serif;font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.2s;}
     .btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,0.08);}
     section{padding:100px 60px;}
@@ -39,242 +38,284 @@
     .section-label{font-size:11px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;text-align:center;}
     .section-title{font-family:'Anton',sans-serif;font-size:clamp(32px,5vw,56px);letter-spacing:4px;text-align:center;margin-bottom:16px;}
     .section-title span{color:var(--gold);}
-    .section-desc{text-align:center;color:var(--white-dim);font-size:14px;max-width:600px;margin:0 auto 60px;line-height:1.7;}
+    .section-desc{text-align:center;color:var(--white-dim);font-size:14px;max-width:620px;margin:0 auto 60px;line-height:1.8;}
     .gold-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 20px;}
-    #services{background:var(--surface);}
-    .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;max-width:1100px;margin:0 auto;}
-    .service-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px 24px;text-align:center;transition:all 0.3s;position:relative;overflow:hidden;}
-    .service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-    .service-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 20px 40px rgba(201,168,76,0.15);}
-    .service-icon{font-size:36px;margin-bottom:16px;}
-    .service-card h3{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;}
-    .service-card p{font-size:13px;color:var(--white-dim);line-height:1.6;}
-    #recrutement{background:var(--bg);}
-    .recruit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:1200px;margin:0 auto;}
-    .recruit-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;transition:all 0.3s;position:relative;overflow:hidden;}
-    .recruit-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-    .recruit-card:hover{border-color:var(--gold);box-shadow:0 16px 40px rgba(201,168,76,0.12);transform:translateY(-4px);}
-    .recruit-card h3{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:16px;}
-    .recruit-card ul{list-style:none;margin-bottom:20px;}
-    .recruit-card ul li{font-size:12px;color:var(--white-dim);padding:5px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.4;}
-    .recruit-card ul li::before{content:'◆';color:var(--gold);font-size:8px;margin-top:3px;flex-shrink:0;}
-    .recruit-slogan{font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border-top:1px solid var(--border);padding-top:14px;}
-    #pourquoi{background:var(--surface);}
-    .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:1000px;margin:0 auto;}
-    .why-card{text-align:center;padding:32px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;transition:all 0.3s;}
-    .why-card:hover{border-color:var(--gold);transform:translateY(-4px);}
-    .why-icon{font-size:32px;margin-bottom:14px;}
-    .why-card h4{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;}
-    .why-card p{font-size:12px;color:var(--white-dim);line-height:1.6;}
-    #filiales{background:var(--bg);}
-    .filiales-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:1100px;margin:0 auto;}
-    .filiale-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all 0.3s;display:flex;flex-direction:column;gap:10px;}
-    .filiale-card:hover{border-color:var(--gold);box-shadow:0 12px 32px rgba(201,168,76,0.1);}
-    .filiale-card h3{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);}
-    .filiale-card p{font-size:12px;color:var(--white-dim);line-height:1.6;}
-    .filiale-tag{display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(201,168,76,0.1);border:1px solid var(--border);color:var(--gold);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;width:fit-content;}
-    #charte{background:var(--surface);}
-    .charte-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;max-width:1100px;margin:0 auto 32px;}
-    .charte-item{display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;transition:border-color 0.2s;}
-    .charte-item:hover{border-color:var(--gold);}
-    .charte-num{font-family:'Anton',sans-serif;font-size:28px;color:var(--gold);opacity:0.4;flex-shrink:0;line-height:1;}
-    .charte-item h4{font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
-    .charte-item p{font-size:12px;color:var(--white-dim);line-height:1.5;}
-    .charte-warning{max-width:1100px;margin:0 auto;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.4);border-radius:14px;padding:20px 28px;text-align:center;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+    #profil{background:var(--surface);}
+    .profil-wrapper{display:grid;grid-template-columns:300px 1fr;gap:40px;max-width:1000px;margin:0 auto;align-items:start;}
+    @media(max-width:768px){.profil-wrapper{grid-template-columns:1fr;}}
+    .profil-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px 24px;text-align:center;position:relative;overflow:hidden;}
+    .profil-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .profil-avatar{width:140px;height:140px;border-radius:50%;border:3px solid var(--gold);margin:0 auto 16px;overflow:hidden;box-shadow:0 0 30px rgba(201,168,76,0.4);}
+    .profil-avatar img{width:100%;height:100%;object-fit:cover;object-position:top;}
+    .profil-name{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:3px;color:var(--white);margin-bottom:4px;}
+    .profil-title{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+    .profil-stats{display:flex;flex-direction:column;gap:0;}
+    .stat-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+    .stat-row:last-child{border-bottom:none;}
+    .stat-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--white-dim);}
+    .stat-val{font-size:12px;font-weight:800;color:var(--gold);}
+    .profil-right{display:flex;flex-direction:column;gap:20px;}
+    .profil-block{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 28px;}
+    .profil-block h3{font-family:'Anton',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:12px;}
+    .profil-block p{font-size:13px;color:var(--white-dim);line-height:1.8;}
+    #experience{background:var(--bg);}
+    .exp-timeline{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:0;}
+    .exp-item{display:flex;gap:24px;padding-bottom:40px;}
+    .exp-item:last-child{padding-bottom:0;}
+    .exp-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+    .exp-dot{width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px rgba(201,168,76,0.5);}
+    .exp-connector{width:2px;flex:1;background:linear-gradient(to bottom,var(--gold),rgba(201,168,76,0.1));margin-top:4px;}
+    .exp-item:last-child .exp-connector{display:none;}
+    .exp-content{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 28px;flex:1;transition:border-color 0.2s;}
+    .exp-content:hover{border-color:var(--gold);}
+    .exp-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+    .exp-poste{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);}
+    .exp-lieu{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--white-dim);background:rgba(201,168,76,0.08);border:1px solid var(--border);padding:4px 12px;border-radius:999px;}
+    .exp-desc{font-size:13px;color:var(--white-dim);line-height:1.7;}
+    .exp-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+    .exp-tag{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);padding:4px 10px;border-radius:999px;}
+    #competences{background:var(--surface);}
+    .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1100px;margin:0 auto;}
+    .comp-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all 0.3s;position:relative;overflow:hidden;}
+    .comp-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .comp-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 16px 40px rgba(201,168,76,0.1);}
+    .comp-icon{font-size:32px;margin-bottom:14px;}
+    .comp-card h3{font-family:'Anton',sans-serif;font-size:17px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;}
+    .comp-card p{font-size:12px;color:var(--white-dim);line-height:1.7;}
+    .comp-bar-wrap{margin-top:14px;}
+    .comp-bar-label{display:flex;justify-content:space-between;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white-dim);margin-bottom:6px;}
+    .comp-bar{height:4px;background:rgba(201,168,76,0.15);border-radius:999px;overflow:hidden;}
+    .comp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:999px;}
+    #motivation{background:var(--bg);}
+    .motiv-box{max-width:800px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:48px;position:relative;overflow:hidden;}
+    .motiv-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .motiv-quote{font-size:80px;color:var(--gold);opacity:0.12;font-family:'Anton',sans-serif;line-height:0.8;margin-bottom:8px;}
+    .motiv-text{font-size:14px;color:var(--white-dim);line-height:2;}
+    .motiv-text strong{color:var(--white);}
+    .motiv-sign{margin-top:32px;display:flex;align-items:center;gap:16px;border-top:1px solid var(--border);padding-top:24px;}
+    .motiv-sign-avatar{width:52px;height:52px;border-radius:50%;border:2px solid var(--gold);overflow:hidden;}
+    .motiv-sign-avatar img{width:100%;height:100%;object-fit:cover;object-position:top;}
+    .motiv-sign-name{font-family:'Anton',sans-serif;font-size:16px;letter-spacing:3px;color:var(--gold);}
+    .motiv-sign-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--white-dim);}
+    #valeurs{background:var(--surface);}
+    .val-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:1000px;margin:0 auto;}
+    .val-card{text-align:center;padding:32px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;transition:all 0.3s;}
+    .val-card:hover{border-color:var(--gold);transform:translateY(-4px);}
+    .val-icon{font-size:32px;margin-bottom:14px;}
+    .val-card h4{font-family:'Anton',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;}
+    .val-card p{font-size:12px;color:var(--white-dim);line-height:1.6;}
     #contact{background:radial-gradient(ellipse at center,rgba(201,168,76,0.1),transparent 70%),var(--bg);text-align:center;padding:100px 20px;}
     .contact-box{max-width:600px;margin:0 auto;}
-    .contact-box h2{font-family:'Anton',sans-serif;font-size:48px;letter-spacing:4px;margin-bottom:16px;}
+    .contact-box h2{font-family:'Anton',sans-serif;font-size:clamp(36px,6vw,56px);letter-spacing:4px;margin-bottom:16px;}
     .contact-box h2 span{color:var(--gold);}
     .contact-box p{color:var(--white-dim);font-size:14px;line-height:1.7;margin-bottom:32px;}
     .contact-info{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;}
     .contact-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--white-dim);}
     .contact-item i{color:var(--gold);}
-    .contact-item a{color:var(--gold);text-decoration:none;}
     footer{background:var(--surface);border-top:1px solid var(--border);padding:32px 60px;text-align:center;}
     .footer-motto{font-family:'Anton',sans-serif;font-size:14px;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
     .footer-tagline{font-size:11px;letter-spacing:2px;color:var(--white-dim);text-transform:uppercase;}
     .fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease;}
     .fade-in.visible{opacity:1;transform:translateY(0);}
-      /* FORMULAIRE */
-    #formulaire { background: var(--bg); }
-    .form-container { max-width: 700px; margin: 0 auto; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media(max-width:600px){ .form-grid { grid-template-columns: 1fr; } }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
-    .form-input, .form-select, .form-textarea {
-      padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; color: var(--white); font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 600; outline: none; transition: border-color 0.2s;
-      width: 100%;
-    }
-    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
-    .form-input::placeholder, .form-textarea::placeholder { color: var(--white-dim); opacity: 0.5; }
-    .form-select { appearance: none; cursor: pointer; }
-    .form-select option { background: var(--card); }
-    .form-textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
-    .form-submit { width: 100%; margin-top: 8px; }
-    .form-msg { display: none; margin-top: 16px; padding: 14px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; text-align: center; }
-    .form-msg.success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: #34d399; display: block; }
-    .form-msg.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; display: block; }
   </style>
 </head>
 <body>
 <nav>
   <div class="nav-logo">ELITE <span>CORP.</span></div>
   <ul class="nav-links">
-    <li><a href="#accueil">Accueil</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#recrutement">Recrutement</a></li><li><a href="#formulaire">Postuler</a></li>
-    <li><a href="#filiales">Filiales</a></li>
-    <li><a href="#charte">Charte</a></li>
-    
+    <li><a href="#profil">Profil</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#competences">Competences</a></li>
+    <li><a href="#motivation">Motivation</a></li>
+    <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
 
 <section id="accueil" class="hero">
-  <div class="hero-badge">⭐ Blaine County — Orange County</div>
-  <h1>ELITE <span>CORP.</span></h1>
-  <div class="hero-sub">Event Planning &amp; Services</div>
-  <div class="hero-location">GTA V ROLEPLAY</div>
+  <div class="hero-badge">CANDIDATURE OFFICIELLE - GTA V Roleplay</div>
+  <h1>CHEF DE LA <span>SECURITE</span></h1>
+  <div class="hero-sub">Pnny's Elite Security - Elite Corp.</div>
+  <div class="hero-location">Blaine County - Orange County</div>
   <div class="hero-divider"></div>
-  <p class="hero-text">Elite Corp. est à la recherche de talents passionnés, motivés et déterminés à faire la différence. Intégrez une équipe d'exception et vivez des expériences uniques.</p>
+  <p class="hero-text">Professionnel de la securite avec une experience terrain confirmee au Galaxy et en tant que Chef Securite a Alamo Island. Je me presente pour diriger la division securite d'Elite Corp. avec rigueur, autorite et engagement total.</p>
   <div class="hero-btns">
-    <a href="#formulaire" class="btn-gold">✉️ Postuler maintenant</a>
-    <a href="#recrutement" class="btn-outline">Postuler →</a>
+    <a href="#motivation" class="btn-gold">Lire ma candidature</a>
+    <a href="#experience" class="btn-outline">Mon parcours</a>
   </div>
 </section>
 
-<section id="services">
-  <div class="section-label">Nos activités</div>
-  <h2 class="section-title">NOS <span>SERVICES</span></h2>
-  <p class="section-desc">Elite Corp. propose une gamme complète de services haut de gamme à travers ses filiales spécialisées.</p>
-  <div class="services-grid">
-    <div class="service-card fade-in"><div class="service-icon">🎉</div><h3>Événements</h3><p>Organisation de soirées, galas et événements exclusifs. Chaque détail est pensé pour une expérience inoubliable.</p></div>
-    <div class="service-card fade-in"><div class="service-icon">🛡️</div><h3>Sécurité</h3><p>Protection et surveillance par Pnny's Elite Security. Votre sécurité est notre priorité absolue.</p></div>
-    <div class="service-card fade-in"><div class="service-icon">✈️</div><h3>Tourisme</h3><p>Voyages et expériences premium par Elite Tourisme. Découvrez Blaine County autrement.</p></div>
-    <div class="service-card fade-in"><div class="service-icon">💃</div><h3>Entertainment</h3><p>Shows et animations par Lilly's Elite Girls. Faites rayonner chaque événement avec style.</p></div>
+<section id="profil">
+  <div class="section-label">Qui suis-je</div>
+  <h2 class="section-title">MON <span>PROFIL</span></h2>
+  <p class="section-desc">Un professionnel de la securite aguerri, avec un parcours solide dans les etablissements les plus exigeants de la region.</p>
+  <div class="profil-wrapper fade-in">
+    <div class="profil-card">
+      <div class="profil-avatar">
+        <img src="Avatar.png" alt="Photo de profil"/>
+      </div>
+      <div class="profil-name">CANDIDAT</div>
+      <div class="profil-title">Chef de la Securite</div>
+      <div class="profil-stats">
+        <div class="stat-row"><span class="stat-label">Poste vise</span><span class="stat-val">Chef Secu</span></div>
+        <div class="stat-row"><span class="stat-label">Experience</span><span class="stat-val">Confirmee</span></div>
+        <div class="stat-row"><span class="stat-label">Galaxy</span><span class="stat-val">Agent Secu</span></div>
+        <div class="stat-row"><span class="stat-label">Alamo Island</span><span class="stat-val">Chef Secu</span></div>
+        <div class="stat-row"><span class="stat-label">Disponibilite</span><span class="stat-val">Immediate</span></div>
+      </div>
+    </div>
+    <div class="profil-right">
+      <div class="profil-block">
+        <h3>OBJECTIF</h3>
+        <p>Integrer Elite Corp. en tant que <strong>Chef de la Securite</strong> au sein de <strong>Pnny's Elite Security</strong> afin de structurer, encadrer et elever le niveau de protection de tous les evenements et etablissements du groupe. Mon ambition est de faire de la securite Elite Corp. une reference sur le serveur.</p>
+      </div>
+      <div class="profil-block">
+        <h3>POINTS FORTS</h3>
+        <p>Leadership naturel, gestion des situations de crise, coordination d'equipe, maitrise des protocoles de securite evenementielle. Habitue aux environnements a haute pression et aux etablissements de prestige comme le Galaxy et Alamo Island.</p>
+      </div>
+      <div class="profil-block">
+        <h3>ZONES D'INTERVENTION</h3>
+        <p>Blaine County, Orange County et ses alentours. Mobilite totale sur l'ensemble des zones d'activite d'Elite Corp.</p>
+      </div>
+    </div>
   </div>
 </section>
-
-<section id="recrutement">
-  <div class="section-label">Rejoignez-nous</div>
-  <h2 class="section-title">NOUS <span>RECRUTONS</span></h2>
-  <p class="section-desc">Rejoignez l'excellence. Rejoignez la communauté. Elite Corp. est à la recherche de talents d'exception.</p>
-  <div class="recruit-grid">
-    <div class="recruit-card fade-in"><h3>💃 Danseuse</h3><ul><li>Présence scénique et charisme</li><li>Maîtrise de différents styles de danse</li><li>Esprit d'équipe et professionnalisme</li><li>Disponibilité pour événements</li></ul><div class="recruit-slogan">Faites rayonner chaque événement.</div></div>
-    <div class="recruit-card fade-in"><h3>🛡️ Agent de Sécurité</h3><ul><li>Sens des responsabilités et vigilance</li><li>Excellente condition physique</li><li>Maîtrise des techniques de sécurité</li><li>Discrétion et professionnalisme</li></ul><div class="recruit-slogan">Votre présence, notre protection.</div></div>
-    <div class="recruit-card fade-in"><h3>📈 Commercial</h3><ul><li>Sens du relationnel et de la négociation</li><li>Ambitieux(se) et orienté(e) résultats</li><li>Excellente présentation</li><li>Autonomie et esprit d'initiative</li></ul><div class="recruit-slogan">Développez votre potentiel, créez des opportunités.</div></div>
-    <div class="recruit-card fade-in"><h3>✈️ Pilote</h3><ul><li>Licence de pilotage valide</li><li>Expérience de vol exigée</li><li>Sens des responsabilités et rigueur</li><li>Disponibilité et réactivité</li></ul><div class="recruit-slogan">Prenez de la hauteur avec nous.</div></div>
-  </div>
-</section>
-
-<section id="pourquoi">
-  <div class="section-label">Nos valeurs</div>
-  <h2 class="section-title">POURQUOI NOUS <span>REJOINDRE</span> ?</h2>
-  <div class="why-grid">
-    <div class="why-card fade-in"><div class="why-icon">💎</div><h4>Excellence</h4><p>Évoluez au sein d'une entreprise d'exception où les standards sont élevés.</p></div>
-    <div class="why-card fade-in"><div class="why-icon">🤝</div><h4>Esprit d'équipe</h4><p>Intégrez une équipe unie et ambitieuse qui avance ensemble.</p></div>
-    <div class="why-card fade-in"><div class="why-icon">⭐</div><h4>Opportunités</h4><p>De réelles perspectives d'évolution au sein de la structure.</p></div>
-    <div class="why-card fade-in"><div class="why-icon">👑</div><h4>Expériences uniques</h4><p>Participez à des événements prestigieux et mémorables.</p></div>
-  </div>
-</section>
-
-<section id="filiales">
-  <div class="section-label">Notre groupe</div>
-  <h2 class="section-title">NOS <span>FILIALES</span></h2>
-  <p class="section-desc">Elite Corp. regroupe quatre filiales spécialisées, toutes sous l'autorité de la maison mère.</p>
-  <div class="filiales-grid">
-    <div class="filiale-card fade-in"><div class="filiale-tag">Sécurité</div><h3>Pnny's Elite Security</h3><p>Protection et sécurité des activités. Assure la surveillance de tous les événements Elite Corp.</p></div>
-    <div class="filiale-card fade-in"><div class="filiale-tag">Événements</div><h3>Elite Adventure</h3><p>Gestion et organisation des événements. Crée des expériences uniques et inoubliables.</p></div>
-    <div class="filiale-card fade-in"><div class="filiale-tag">Entertainment</div><h3>Lilly's Elite Girls</h3><p>Renforce l'attractivité et l'animation des événements avec style et élégance.</p></div>
-    <div class="filiale-card fade-in"><div class="filiale-tag">Tourisme</div><h3>Elite Tourisme</h3><p>Développe les services clients premium et les expériences de voyage haut de gamme.</p></div>
-  </div>
-</section>
-
-<section id="charte">
-  <div class="section-label">Nos règles</div>
-  <h2 class="section-title">CHARTE DE <span>CONDUITE</span></h2>
-  <p class="section-desc">Maison mère et filiales. Toutes les filiales dépendent de la maison mère et doivent respecter cette charte.</p>
-  <div class="charte-grid">
-    <div class="charte-item fade-in"><div class="charte-num">01</div><div><h4>Loyauté</h4><p>Chaque membre agit avant tout pour Elite Corp. Les intérêts de la structure passent avant les intérêts personnels.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">02</div><div><h4>Respect et Discipline</h4><p>Le respect est obligatoire entre membres et filiales. La hiérarchie doit être respectée.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">03</div><div><h4>Professionnalisme</h4><p>Chaque membre doit agir avec sérieux, efficacité et maîtrise dans toutes les situations.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">04</div><div><h4>Coordination des Filiales</h4><p>Les filiales collaborent. Aucune filiale ne doit nuire à une autre.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">05</div><div><h4>Confidentialité</h4><p>Les informations internes et opérations sont strictement confidentielles.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">06</div><div><h4>Image</h4><p>Chaque membre représente Elite Corp. Tout comportement nuisible à l'image est interdit.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">07</div><div><h4>Autorité</h4><p>La maison mère prend les décisions. Elles doivent être appliquées sans discussion.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">08</div><div><h4>Responsabilité</h4><p>Chacun assume ses actes et signale les problèmes rapidement à la hiérarchie.</p></div></div>
-    <div class="charte-item fade-in"><div class="charte-num">09</div><div><h4>Objectif Commun</h4><p>Développer et faire prospérer Elite Corp. Une seule vision, plusieurs forces.</p></div></div>
-  </div>
-  <div class="charte-warning fade-in">⚠️ Tout manquement peut entraîner des sanctions, jusqu'à l'exclusion.</div>
-</section>
-
-
-<section id="formulaire">
-  <div class="section-label">Candidature</div>
-  <h2 class="section-title">FORMULAIRE DE <span>RECRUTEMENT</span></h2>
-  <p class="section-desc">Remplissez ce formulaire pour postuler. Nous vous contacterons via nos contacts.</p>
-  <div class="form-container">
-    <form id="recruitForm">
-      <div class="form-grid">
-        <div class="form-group">
-          <label class="form-label">Prénom *</label>
-          <input type="text" name="prenom" class="form-input" placeholder="Votre prénom" required>
+<section id="experience">
+  <div class="section-label">Parcours professionnel</div>
+  <h2 class="section-title">MON <span>EXPERIENCE</span></h2>
+  <p class="section-desc">Deux postes cles dans des etablissements de reference, avec des responsabilites croissantes en matiere de securite et de management.</p>
+  <div class="exp-timeline">
+    <div class="exp-item fade-in">
+      <div class="exp-line"><div class="exp-dot"></div><div class="exp-connector"></div></div>
+      <div class="exp-content">
+        <div class="exp-header">
+          <div class="exp-poste">Chef de la Securite</div>
+          <div class="exp-lieu">Alamo Island</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Nom *</label>
-          <input type="text" name="nom" class="form-input" placeholder="Votre nom" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Contact (Téléphone) *</label><input type="text" class="form-input" placeholder="Téléphone ou email" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Âge</label>
-          <input type="text" name="age" class="form-input" placeholder="Votre âge">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">Poste souhaité *</label>
-          <select name="poste" class="form-select" required>
-            <option value="" disabled selected>Choisir un poste...</option>
-            <option value="Danseuse">💃 Danseuse</option>
-            <option value="Agent de Sécurité">🛡️ Agent de Sécurité</option>
-            <option value="Commercial">📈 Commercial</option>
-            <option value="Pilote">✈️ Pilote</option>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label class="form-label">Expérience</label>
-          <input type="text" name="experience" class="form-input" placeholder="Votre expérience dans ce domaine">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">Motivation</label>
-          <textarea name="motivation" class="form-textarea" placeholder="Pourquoi voulez-vous rejoindre Elite Corp. ?"></textarea>
+        <p class="exp-desc">Direction complete du dispositif securitaire de l'etablissement. Gestion des agents, organisation des rotations, gestion des incidents et maintien de l'ordre dans un environnement exigeant. Mise en place de protocoles clairs et formation des equipes sous ma responsabilite. Coordination directe avec la direction pour assurer la securite de tous les evenements.</p>
+        <div class="exp-tags">
+          <span class="exp-tag">Management equipe</span>
+          <span class="exp-tag">Gestion incidents</span>
+          <span class="exp-tag">Protocoles secu</span>
+          <span class="exp-tag">Formation agents</span>
+          <span class="exp-tag">Direction operationnelle</span>
         </div>
       </div>
-      <button type="submit" class="btn-gold form-submit">✉️ Envoyer ma candidature</button>
-      <div class="form-msg" id="formMsg"></div>
-    </form>
+    </div>
+    <div class="exp-item fade-in">
+      <div class="exp-line"><div class="exp-dot"></div><div class="exp-connector"></div></div>
+      <div class="exp-content">
+        <div class="exp-header">
+          <div class="exp-poste">Agent de Securite</div>
+          <div class="exp-lieu">The Galaxy</div>
+        </div>
+        <p class="exp-desc">Experience au sein du Galaxy, l'un des etablissements les plus frequentes et les plus exigeants de la region. Securisation des entrees, gestion des flux de clientele VIP, coordination avec la direction et intervention rapide en cas de trouble. Une ecole de rigueur et de professionnalisme dans un cadre haut de gamme.</p>
+        <div class="exp-tags">
+          <span class="exp-tag">Securite evenementielle</span>
+          <span class="exp-tag">Clientele VIP</span>
+          <span class="exp-tag">Controle acces</span>
+          <span class="exp-tag">Intervention rapide</span>
+          <span class="exp-tag">Environnement prestige</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="competences">
+  <div class="section-label">Savoir-faire</div>
+  <h2 class="section-title">MES <span>COMPETENCES</span></h2>
+  <p class="section-desc">Des competences forgees sur le terrain, dans des environnements reels et sous pression.</p>
+  <div class="comp-grid">
+    <div class="comp-card fade-in">
+      <div class="comp-icon">👥</div>
+      <h3>Management</h3>
+      <p>Encadrement et coordination d'equipes de securite. Briefings, rotations, discipline et cohesion de groupe.</p>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Niveau</span><span>95%</span></div><div class="comp-bar"><div class="comp-bar-fill" style="width:95%"></div></div></div>
+    </div>
+    <div class="comp-card fade-in">
+      <div class="comp-icon">⚡</div>
+      <h3>Gestion de crise</h3>
+      <p>Reactivite et sang-froid face aux situations tendues. Prise de decision rapide et efficace sous pression.</p>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Niveau</span><span>92%</span></div><div class="comp-bar"><div class="comp-bar-fill" style="width:92%"></div></div></div>
+    </div>
+    <div class="comp-card fade-in">
+      <div class="comp-icon">🔒</div>
+      <h3>Protocoles securite</h3>
+      <p>Mise en place et respect des procedures de securite. Controle d'acces, perimetres, surveillance active.</p>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Niveau</span><span>90%</span></div><div class="comp-bar"><div class="comp-bar-fill" style="width:90%"></div></div></div>
+    </div>
+    <div class="comp-card fade-in">
+      <div class="comp-icon">🤝</div>
+      <h3>Communication</h3>
+      <p>Relation avec la direction, les clients et les equipes. Autorite naturelle et ecoute active.</p>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Niveau</span><span>88%</span></div><div class="comp-bar"><div class="comp-bar-fill" style="width:88%"></div></div></div>
+    </div>
+    <div class="comp-card fade-in">
+      <div class="comp-icon">🎯</div>
+      <h3>Securite evenementielle</h3>
+      <p>Experience dans la securisation de soirees, galas et evenements a forte affluence et clientele VIP.</p>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Niveau</span><span>93%</span></div><div class="comp-bar"><div class="comp-bar-fill" style="width:93%"></div></div></div>
+    </div>
+    <div class="comp-card fade-in">
+      <div class="comp-icon">👑</div>
+      <h3>Leadership</h3>
+      <p>Capacite a federer une equipe autour d'un objectif commun. Exemplarite et autorite reconnue.</p>
+      <div class="comp-bar-wrap"><div class="comp-bar-label"><span>Niveau</span><span>96%</span></div><div class="comp-bar"><div class="comp-bar-fill" style="width:96%"></div></div></div>
+    </div>
+  </div>
+</section>
+<section id="motivation">
+  <div class="section-label">Lettre de motivation</div>
+  <h2 class="section-title">POURQUOI <span>ELITE CORP.</span></h2>
+  <p class="section-desc">Ma vision, mes ambitions et mon engagement pour la division securite d'Elite Corp.</p>
+  <div class="motiv-box fade-in">
+    <div class="motiv-quote">"</div>
+    <p class="motiv-text">
+      A l'attention de la direction d'<strong>Elite Corp.</strong>,<br><br>
+      Fort d'une experience solide dans le domaine de la securite, acquise au sein du <strong>Galaxy</strong> puis en tant que <strong>Chef de la Securite a Alamo Island</strong>, je me permets de vous soumettre ma candidature pour le poste de <strong>Chef de la Securite</strong> au sein de <strong>Pnny's Elite Security</strong>.<br><br>
+      Mon passage au Galaxy m'a permis de comprendre les exigences d'un etablissement haut de gamme : rigueur, discretion, gestion d'une clientele VIP et reactivite en toutes circonstances. C'est cette experience qui m'a forge les bases d'un professionnel serieux et fiable.<br><br>
+      En tant que Chef de la Securite a Alamo Island, j'ai franchi un cap supplementaire : diriger une equipe, organiser les dispositifs, gerer les incidents et maintenir un niveau d'ordre constant. J'ai appris que la securite ne se limite pas a la presence physique — elle repose sur l'organisation, l'anticipation et le leadership.<br><br>
+      Aujourd'hui, je souhaite mettre ces competences au service d'<strong>Elite Corp.</strong>, une structure que je respecte pour son serieux, son ambition et ses valeurs. Je suis convaincu de pouvoir elever le niveau de votre division securite et d'en faire un pilier incontournable du groupe.<br><br>
+      <strong>Loyaute, discipline et professionnalisme</strong> — ce sont les valeurs qui me definissent, et ce sont exactement celles qu'Elite Corp. exige.
+    </p>
+    <div class="motiv-sign">
+      <div class="motiv-sign-avatar"><img src="Avatar.png" alt="Candidat"/></div>
+      <div>
+        <div class="motiv-sign-name">LE CANDIDAT</div>
+        <div class="motiv-sign-title">Candidat — Chef de la Securite | Pnny's Elite Security</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="valeurs">
+  <div class="section-label">Ce que j'apporte</div>
+  <h2 class="section-title">MES <span>ENGAGEMENTS</span></h2>
+  <p class="section-desc">Quatre piliers qui guident mon action au quotidien et que j'apporterai a Elite Corp.</p>
+  <div class="val-grid">
+    <div class="val-card fade-in"><div class="val-icon">🛡️</div><h4>Protection</h4><p>Assurer la securite de chaque evenement et etablissement Elite Corp. sans faille et sans compromis.</p></div>
+    <div class="val-card fade-in"><div class="val-icon">👑</div><h4>Leadership</h4><p>Encadrer, motiver et faire monter en competence chaque agent sous ma responsabilite.</p></div>
+    <div class="val-card fade-in"><div class="val-icon">⚡</div><h4>Reactivite</h4><p>Intervenir vite et bien. Chaque seconde compte dans la gestion d'un incident.</p></div>
+    <div class="val-card fade-in"><div class="val-icon">🤝</div><h4>Loyaute</h4><p>Agir dans l'interet d'Elite Corp. en toutes circonstances. La structure avant tout.</p></div>
   </div>
 </section>
 
 <section id="contact">
-  <div class="contact-box">
+  <div class="contact-box fade-in">
     <div class="gold-line"></div>
-    <h2>NOUS <span>CONTACTER</span></h2>
-    <p>Intéressé(e) ? Envoyez votre candidature (CV + lettre de motivation) et rejoignez une équipe d'exception.</p>
+    <h2>ME <span>CONTACTER</span></h2>
+    <p>Disponible immediatement pour un entretien. N'hesitez pas a me contacter via les coordonnees d'Elite Corp. ou directement en jeu.</p>
     <div class="contact-info">
-      <div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:RECRUTEMENT@ELITECORP.COM">RECRUTEMENT@ELITECORP.COM</a></div>
+      <div class="contact-item"><i class="fas fa-envelope"></i><span>RECRUTEMENT@ELITECORP.COM</span></div>
       <div class="contact-item"><i class="fas fa-phone"></i><span>520-6152</span></div>
     </div>
-    <a href="#formulaire" class="btn-gold">✉️ Postuler maintenant</a>
+    <a href="mailto:RECRUTEMENT@ELITECORP.COM" class="btn-gold">Envoyer ma candidature</a>
   </div>
 </section>
 
 <footer>
-  <div class="footer-motto">ÉLÉGANCE • DISCIPLINE • UNITÉ • EXCELLENCE</div>
-  <div class="footer-tagline">Elite Corp — Une seule vision, plusieurs forces.</div>
+  <div class="footer-motto">LOYAUTE - DISCIPLINE - PROTECTION - EXCELLENCE</div>
+  <div class="footer-tagline">Candidature Chef de la Securite — Elite Corp. | Pnny's Elite Security</div>
 </footer>
 
 <script>
@@ -283,40 +324,5 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
-<script>
-  document.getElementById("recruitForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-    const btn = this.querySelector("button[type=submit]");
-    const msg = document.getElementById("formMsg");
-    btn.disabled = true;
-    btn.textContent = "⏳ Envoi en cours...";
-    msg.className = "form-msg";
-    const data = Object.fromEntries(new FormData(this));
-    try {
-      const res = await fetch("/postuler", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      const json = await res.json();
-      if (json.success) {
-        msg.textContent = "✅ " + json.message;
-        msg.className = "form-msg success";
-        this.reset();
-      } else {
-        msg.textContent = "❌ " + (json.error || "Erreur");
-        msg.className = "form-msg error";
-      }
-    } catch(err) {
-      msg.textContent = "❌ Erreur de connexion. Réessayez.";
-      msg.className = "form-msg error";
-    }
-    btn.disabled = false;
-    btn.textContent = "✉️ Envoyer ma candidature";
-  });
-</script>
 </body>
 </html>
-
-
-
