@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Elite Corp. — Event Planning & Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <style>
+    :root{--gold:#c9a84c;--gold-light:#f0d080;--gold-dim:#8a6f2e;--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:rgba(201,168,76,0.25);--white:#f0ead8;--white-dim:#9a9080;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;}
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:50px;}
+    nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:16px 60px;background:rgba(10,10,15,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);}
+    .nav-logo{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:4px;color:var(--gold);}
+    .nav-logo span{color:var(--white);}
+    .nav-links{display:flex;gap:28px;list-style:none;}
+    .nav-links a{color:var(--white-dim);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:color 0.2s;}
+    .nav-links a:hover{color:var(--gold);}
+    
+    @media(max-width:768px){nav{padding:14px 20px;}.nav-links{display:none;}}
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;background:radial-gradient(ellipse at top,rgba(201,168,76,0.12),transparent 60%),radial-gradient(ellipse at bottom,rgba(201,168,76,0.06),transparent 50%),var(--bg);position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);background-size:50px 50px;}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:999px;border:1px solid var(--border);background:rgba(201,168,76,0.08);color:var(--gold);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
+    .hero h1{font-family:'Anton',sans-serif;font-size:clamp(60px,10vw,120px);letter-spacing:8px;line-height:1;color:var(--white);text-shadow:0 0 60px rgba(201,168,76,0.3);}
+    .hero h1 span{color:var(--gold);}
+    .hero-sub{font-size:14px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin:12px 0 8px;}
+    .hero-location{font-size:11px;letter-spacing:3px;color:var(--white-dim);margin-bottom:24px;}
+    .hero-divider{width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 28px;}
+    .hero-text{font-size:15px;color:var(--white-dim);max-width:560px;line-height:1.7;margin-bottom:40px;}
+    .hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+    .btn-gold{padding:14px 32px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:10px;color:#000;font-family:'Inter',sans-serif;font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.2s;box-shadow:0 8px 24px rgba(201,168,76,0.3);display:inline-flex;align-items:center;gap:8px;}
+    .btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.4);}
+    .btn-outline{padding:14px 32px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--gold);font-family:'Inter',sans-serif;font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+    .btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+    section{padding:100px 60px;}
+    @media(max-width:768px){section{padding:60px 20px;}}
+    .section-label{font-size:11px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;text-align:center;}
+    .section-title{font-family:'Anton',sans-serif;font-size:clamp(32px,5vw,56px);letter-spacing:4px;text-align:center;margin-bottom:16px;}
+    .section-title span{color:var(--gold);}
+    .section-desc{text-align:center;color:var(--white-dim);font-size:14px;max-width:600px;margin:0 auto 60px;line-height:1.7;}
+    .gold-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 20px;}
+    #services{background:var(--surface);}
+    .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;max-width:1100px;margin:0 auto;}
+    .service-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px 24px;text-align:center;transition:all 0.3s;position:relative;overflow:hidden;}
+    .service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .service-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 20px 40px rgba(201,168,76,0.15);}
+    .service-icon{font-size:36px;margin-bottom:16px;}
+    .service-card h3{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;}
+    .service-card p{font-size:13px;color:var(--white-dim);line-height:1.6;}
+    #recrutement{background:var(--bg);}
+    .recruit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:1200px;margin:0 auto;}
+    .recruit-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;transition:all 0.3s;position:relative;overflow:hidden;}
+    .recruit-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .recruit-card:hover{border-color:var(--gold);box-shadow:0 16px 40px rgba(201,168,76,0.12);transform:translateY(-4px);}
+    .recruit-card h3{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:16px;}
+    .recruit-card ul{list-style:none;margin-bottom:20px;}
+    .recruit-card ul li{font-size:12px;color:var(--white-dim);padding:5px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.4;}
+    .recruit-card ul li::before{content:'◆';color:var(--gold);font-size:8px;margin-top:3px;flex-shrink:0;}
+    .recruit-slogan{font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border-top:1px solid var(--border);padding-top:14px;}
+    #pourquoi{background:var(--surface);}
+    .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:1000px;margin:0 auto;}
+    .why-card{text-align:center;padding:32px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;transition:all 0.3s;}
+    .why-card:hover{border-color:var(--gold);transform:translateY(-4px);}
+    .why-icon{font-size:32px;margin-bottom:14px;}
+    .why-card h4{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;}
+    .why-card p{font-size:12px;color:var(--white-dim);line-height:1.6;}
+    #filiales{background:var(--bg);}
+    .filiales-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:1100px;margin:0 auto;}
+    .filiale-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all 0.3s;display:flex;flex-direction:column;gap:10px;}
+    .filiale-card:hover{border-color:var(--gold);box-shadow:0 12px 32px rgba(201,168,76,0.1);}
+    .filiale-card h3{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);}
+    .filiale-card p{font-size:12px;color:var(--white-dim);line-height:1.6;}
+    .filiale-tag{display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(201,168,76,0.1);border:1px solid var(--border);color:var(--gold);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;width:fit-content;}
+    #charte{background:var(--surface);}
+    .charte-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;max-width:1100px;margin:0 auto 32px;}
+    .charte-item{display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;transition:border-color 0.2s;}
+    .charte-item:hover{border-color:var(--gold);}
+    .charte-num{font-family:'Anton',sans-serif;font-size:28px;color:var(--gold);opacity:0.4;flex-shrink:0;line-height:1;}
+    .charte-item h4{font-size:13px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+    .charte-item p{font-size:12px;color:var(--white-dim);line-height:1.5;}
+    .charte-warning{max-width:1100px;margin:0 auto;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.4);border-radius:14px;padding:20px 28px;text-align:center;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+    #contact{background:radial-gradient(ellipse at center,rgba(201,168,76,0.1),transparent 70%),var(--bg);text-align:center;padding:100px 20px;}
+    .contact-box{max-width:600px;margin:0 auto;}
+    .contact-box h2{font-family:'Anton',sans-serif;font-size:48px;letter-spacing:4px;margin-bottom:16px;}
+    .contact-box h2 span{color:var(--gold);}
+    .contact-box p{color:var(--white-dim);font-size:14px;line-height:1.7;margin-bottom:32px;}
+    .contact-info{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;}
+    .contact-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--white-dim);}
+    .contact-item i{color:var(--gold);}
+    .contact-item a{color:var(--gold);text-decoration:none;}
+    footer{background:var(--surface);border-top:1px solid var(--border);padding:32px 60px;text-align:center;}
+    .footer-motto{font-family:'Anton',sans-serif;font-size:14px;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
+    .footer-tagline{font-size:11px;letter-spacing:2px;color:var(--white-dim);text-transform:uppercase;}
+    .fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease;}
+    .fade-in.visible{opacity:1;transform:translateY(0);}
+      /* FORMULAIRE */
+    #formulaire { background: var(--bg); }
+    .form-container { max-width: 700px; margin: 0 auto; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width:600px){ .form-grid { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+    .form-input, .form-select, .form-textarea {
+      padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--white); font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600; outline: none; transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--white-dim); opacity: 0.5; }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-select option { background: var(--card); }
+    .form-textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+    .form-submit { width: 100%; margin-top: 8px; }
+    .form-msg { display: none; margin-top: 16px; padding: 14px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; text-align: center; }
+    .form-msg.success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: #34d399; display: block; }
+    .form-msg.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; display: block; }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">ELITE <span>CORP.</span></div>
+  <ul class="nav-links">
+    <li><a href="#accueil">Accueil</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#recrutement">Recrutement</a></li><li><a href="#formulaire">Postuler</a></li>
+    <li><a href="#filiales">Filiales</a></li>
+    <li><a href="#charte">Charte</a></li>
+    
+  </ul>
+</nav>
+
+<section id="accueil" class="hero">
+  <div class="hero-badge">⭐ Blaine County — Orange County</div>
+  <h1>ELITE <span>CORP.</span></h1>
+  <div class="hero-sub">Event Planning &amp; Services</div>
+  <div class="hero-location">GTA V ROLEPLAY</div>
+  <div class="hero-divider"></div>
+  <p class="hero-text">Elite Corp. est à la recherche de talents passionnés, motivés et déterminés à faire la différence. Intégrez une équipe d'exception et vivez des expériences uniques.</p>
+  <div class="hero-btns">
+    <a href="#formulaire" class="btn-gold">✉️ Postuler maintenant</a>
+    <a href="#recrutement" class="btn-outline">Postuler →</a>
+  </div>
+</section>
+
+<section id="services">
+  <div class="section-label">Nos activités</div>
+  <h2 class="section-title">NOS <span>SERVICES</span></h2>
+  <p class="section-desc">Elite Corp. propose une gamme complète de services haut de gamme à travers ses filiales spécialisées.</p>
+  <div class="services-grid">
+    <div class="service-card fade-in"><div class="service-icon">🎉</div><h3>Événements</h3><p>Organisation de soirées, galas et événements exclusifs. Chaque détail est pensé pour une expérience inoubliable.</p></div>
+    <div class="service-card fade-in"><div class="service-icon">🛡️</div><h3>Sécurité</h3><p>Protection et surveillance par Pnny's Elite Security. Votre sécurité est notre priorité absolue.</p></div>
+    <div class="service-card fade-in"><div class="service-icon">✈️</div><h3>Tourisme</h3><p>Voyages et expériences premium par Elite Tourisme. Découvrez Blaine County autrement.</p></div>
+    <div class="service-card fade-in"><div class="service-icon">💃</div><h3>Entertainment</h3><p>Shows et animations par Lilly's Elite Girls. Faites rayonner chaque événement avec style.</p></div>
+  </div>
+</section>
+
+<section id="recrutement">
+  <div class="section-label">Rejoignez-nous</div>
+  <h2 class="section-title">NOUS <span>RECRUTONS</span></h2>
+  <p class="section-desc">Rejoignez l'excellence. Rejoignez la communauté. Elite Corp. est à la recherche de talents d'exception.</p>
+  <div class="recruit-grid">
+    <div class="recruit-card fade-in"><h3>💃 Danseuse</h3><ul><li>Présence scénique et charisme</li><li>Maîtrise de différents styles de danse</li><li>Esprit d'équipe et professionnalisme</li><li>Disponibilité pour événements</li></ul><div class="recruit-slogan">Faites rayonner chaque événement.</div></div>
+    <div class="recruit-card fade-in"><h3>🛡️ Agent de Sécurité</h3><ul><li>Sens des responsabilités et vigilance</li><li>Excellente condition physique</li><li>Maîtrise des techniques de sécurité</li><li>Discrétion et professionnalisme</li></ul><div class="recruit-slogan">Votre présence, notre protection.</div></div>
+    <div class="recruit-card fade-in"><h3>📈 Commercial</h3><ul><li>Sens du relationnel et de la négociation</li><li>Ambitieux(se) et orienté(e) résultats</li><li>Excellente présentation</li><li>Autonomie et esprit d'initiative</li></ul><div class="recruit-slogan">Développez votre potentiel, créez des opportunités.</div></div>
+    <div class="recruit-card fade-in"><h3>✈️ Pilote</h3><ul><li>Licence de pilotage valide</li><li>Expérience de vol exigée</li><li>Sens des responsabilités et rigueur</li><li>Disponibilité et réactivité</li></ul><div class="recruit-slogan">Prenez de la hauteur avec nous.</div></div>
+  </div>
+</section>
+
+<section id="pourquoi">
+  <div class="section-label">Nos valeurs</div>
+  <h2 class="section-title">POURQUOI NOUS <span>REJOINDRE</span> ?</h2>
+  <div class="why-grid">
+    <div class="why-card fade-in"><div class="why-icon">💎</div><h4>Excellence</h4><p>Évoluez au sein d'une entreprise d'exception où les standards sont élevés.</p></div>
+    <div class="why-card fade-in"><div class="why-icon">🤝</div><h4>Esprit d'équipe</h4><p>Intégrez une équipe unie et ambitieuse qui avance ensemble.</p></div>
+    <div class="why-card fade-in"><div class="why-icon">⭐</div><h4>Opportunités</h4><p>De réelles perspectives d'évolution au sein de la structure.</p></div>
+    <div class="why-card fade-in"><div class="why-icon">👑</div><h4>Expériences uniques</h4><p>Participez à des événements prestigieux et mémorables.</p></div>
+  </div>
+</section>
+
+<section id="filiales">
+  <div class="section-label">Notre groupe</div>
+  <h2 class="section-title">NOS <span>FILIALES</span></h2>
+  <p class="section-desc">Elite Corp. regroupe quatre filiales spécialisées, toutes sous l'autorité de la maison mère.</p>
+  <div class="filiales-grid">
+    <div class="filiale-card fade-in"><div class="filiale-tag">Sécurité</div><h3>Pnny's Elite Security</h3><p>Protection et sécurité des activités. Assure la surveillance de tous les événements Elite Corp.</p></div>
+    <div class="filiale-card fade-in"><div class="filiale-tag">Événements</div><h3>Elite Adventure</h3><p>Gestion et organisation des événements. Crée des expériences uniques et inoubliables.</p></div>
+    <div class="filiale-card fade-in"><div class="filiale-tag">Entertainment</div><h3>Lilly's Elite Girls</h3><p>Renforce l'attractivité et l'animation des événements avec style et élégance.</p></div>
+    <div class="filiale-card fade-in"><div class="filiale-tag">Tourisme</div><h3>Elite Tourisme</h3><p>Développe les services clients premium et les expériences de voyage haut de gamme.</p></div>
+  </div>
+</section>
+
+<section id="charte">
+  <div class="section-label">Nos règles</div>
+  <h2 class="section-title">CHARTE DE <span>CONDUITE</span></h2>
+  <p class="section-desc">Maison mère et filiales. Toutes les filiales dépendent de la maison mère et doivent respecter cette charte.</p>
+  <div class="charte-grid">
+    <div class="charte-item fade-in"><div class="charte-num">01</div><div><h4>Loyauté</h4><p>Chaque membre agit avant tout pour Elite Corp. Les intérêts de la structure passent avant les intérêts personnels.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">02</div><div><h4>Respect et Discipline</h4><p>Le respect est obligatoire entre membres et filiales. La hiérarchie doit être respectée.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">03</div><div><h4>Professionnalisme</h4><p>Chaque membre doit agir avec sérieux, efficacité et maîtrise dans toutes les situations.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">04</div><div><h4>Coordination des Filiales</h4><p>Les filiales collaborent. Aucune filiale ne doit nuire à une autre.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">05</div><div><h4>Confidentialité</h4><p>Les informations internes et opérations sont strictement confidentielles.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">06</div><div><h4>Image</h4><p>Chaque membre représente Elite Corp. Tout comportement nuisible à l'image est interdit.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">07</div><div><h4>Autorité</h4><p>La maison mère prend les décisions. Elles doivent être appliquées sans discussion.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">08</div><div><h4>Responsabilité</h4><p>Chacun assume ses actes et signale les problèmes rapidement à la hiérarchie.</p></div></div>
+    <div class="charte-item fade-in"><div class="charte-num">09</div><div><h4>Objectif Commun</h4><p>Développer et faire prospérer Elite Corp. Une seule vision, plusieurs forces.</p></div></div>
+  </div>
+  <div class="charte-warning fade-in">⚠️ Tout manquement peut entraîner des sanctions, jusqu'à l'exclusion.</div>
+</section>
+
+
+<section id="formulaire">
+  <div class="section-label">Candidature</div>
+  <h2 class="section-title">FORMULAIRE DE <span>RECRUTEMENT</span></h2>
+  <p class="section-desc">Remplissez ce formulaire pour postuler. Nous vous contacterons via nos contacts.</p>
+  <div class="form-container">
+    <form id="recruitForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Prénom *</label>
+          <input type="text" name="prenom" class="form-input" placeholder="Votre prénom" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nom *</label>
+          <input type="text" name="nom" class="form-input" placeholder="Votre nom" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contact (Téléphone) *</label><input type="text" class="form-input" placeholder="Téléphone ou email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Âge</label>
+          <input type="text" name="age" class="form-input" placeholder="Votre âge">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Poste souhaité *</label>
+          <select name="poste" class="form-select" required>
+            <option value="" disabled selected>Choisir un poste...</option>
+            <option value="Danseuse">💃 Danseuse</option>
+            <option value="Agent de Sécurité">🛡️ Agent de Sécurité</option>
+            <option value="Commercial">📈 Commercial</option>
+            <option value="Pilote">✈️ Pilote</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Expérience</label>
+          <input type="text" name="experience" class="form-input" placeholder="Votre expérience dans ce domaine">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Motivation</label>
+          <textarea name="motivation" class="form-textarea" placeholder="Pourquoi voulez-vous rejoindre Elite Corp. ?"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn-gold form-submit">✉️ Envoyer ma candidature</button>
+      <div class="form-msg" id="formMsg"></div>
+    </form>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-box">
+    <div class="gold-line"></div>
+    <h2>NOUS <span>CONTACTER</span></h2>
+    <p>Intéressé(e) ? Envoyez votre candidature (CV + lettre de motivation) et rejoignez une équipe d'exception.</p>
+    <div class="contact-info">
+      <div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:RECRUTEMENT@ELITECORP.COM">RECRUTEMENT@ELITECORP.COM</a></div>
+      <div class="contact-item"><i class="fas fa-phone"></i><span>520-6152</span></div>
+    </div>
+    <a href="#formulaire" class="btn-gold">✉️ Postuler maintenant</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-motto">ÉLÉGANCE • DISCIPLINE • UNITÉ • EXCELLENCE</div>
+  <div class="footer-tagline">Elite Corp — Une seule vision, plusieurs forces.</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+<script>
+  document.getElementById("recruitForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector("button[type=submit]");
+    const msg = document.getElementById("formMsg");
+    btn.disabled = true;
+    btn.textContent = "⏳ Envoi en cours...";
+    msg.className = "form-msg";
+    const data = Object.fromEntries(new FormData(this));
+    try {
+      const res = await fetch("/postuler", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      if (json.success) {
+        msg.textContent = "✅ " + json.message;
+        msg.className = "form-msg success";
+        this.reset();
+      } else {
+        msg.textContent = "❌ " + (json.error || "Erreur");
+        msg.className = "form-msg error";
+      }
+    } catch(err) {
+      msg.textContent = "❌ Erreur de connexion. Réessayez.";
+      msg.className = "form-msg error";
+    }
+    btn.disabled = false;
+    btn.textContent = "✉️ Envoyer ma candidature";
+  });
+</script>
+</body>
+</html>
+
+
+
