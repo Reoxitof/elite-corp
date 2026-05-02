@@ -38,6 +38,16 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+// Rôles valides : admin, user, interimaire
+const VALID_ROLES = ["admin", "user", "interimaire"];
+
+// Bloque les intérimaires sur les actions sensibles (commandes, annonces, gestion)
+function requireNotInterimaire(req, res, next) {
+  if (!req.session) return res.status(401).json({ error: "Non authentifié" });
+  if (req.session.role === "interimaire") return res.status(403).json({ error: "Accès refusé — rôle intérimaire" });
+  next();
+}
+
 const pool = new Pool({
   host: process.env.PG_HOST || "localhost",
   port: parseInt(process.env.PG_PORT || "5432"),
@@ -181,6 +191,21 @@ app.get("/api/me", requireAuth, (req, res) => {
 
 // ─── EMPLOYEES ───────────────────────────────────────────────────────────────
 
+// ─── EMPLOYEES PAR RÔLE ──────────────────────────────────────────────────────
+app.get("/api/employees/role/:role", requireAuth, async (req, res) => {
+  const role = req.params.role;
+  if (!VALID_ROLES.includes(role)) return res.status(400).json({ error: `Rôle invalide. Valeurs acceptées : ${VALID_ROLES.join(", ")}` });
+  try {
+    const result = await pool.query(
+      "SELECT id, nom, prenom, poste, email, telephone, role, statut, date_embauche FROM employees WHERE role=$1 AND statut='actif' ORDER BY nom, prenom",
+      [role]
+    );
+    res.json(result.rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.get("/api/employees", requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -195,12 +220,29 @@ app.get("/api/employees", requireAuth, async (req, res) => {
 app.post("/api/employees", requireAdmin, async (req, res) => {
   const { nom, prenom, poste, email, telephone, role, password } = req.body;
   if (!nom || !prenom || !poste) return res.status(400).json({ error: "Champs obligatoires manquants" });
+  const roleValide = VALID_ROLES.includes(role) ? role : "user";
   try {
     const hash = password ? crypto.createHash("sha256").update(password).digest("hex") : null;
     const result = await pool.query(
       "INSERT INTO employees (nom, prenom, poste, email, telephone, role, password_hash) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, nom, prenom, poste, email, telephone, role, statut",
-      [nom, prenom, poste, email || null, telephone || null, role || "user", hash]
+      [nom, prenom, poste, email || null, telephone || null, roleValide, hash]
     );
+    res.json(result.rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── CHANGER LE RÔLE D'UN EMPLOYÉ ────────────────────────────────────────────
+app.put("/api/employees/:id/role", requireAdmin, async (req, res) => {
+  const { role } = req.body;
+  if (!VALID_ROLES.includes(role)) return res.status(400).json({ error: `Rôle invalide. Valeurs acceptées : ${VALID_ROLES.join(", ")}` });
+  try {
+    const result = await pool.query(
+      "UPDATE employees SET role=$1 WHERE id=$2 RETURNING id, nom, prenom, poste, role, statut",
+      [role, req.params.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: "Employé introuvable" });
     res.json(result.rows[0]);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -209,15 +251,16 @@ app.post("/api/employees", requireAdmin, async (req, res) => {
 
 app.put("/api/employees/:id", requireAdmin, async (req, res) => {
   const { nom, prenom, poste, email, telephone, role, statut, password } = req.body;
+  const roleValide = VALID_ROLES.includes(role) ? role : "user";
   try {
     let query, params;
     if (password) {
       const hash = crypto.createHash("sha256").update(password).digest("hex");
       query = "UPDATE employees SET nom=$1, prenom=$2, poste=$3, email=$4, telephone=$5, role=$6, statut=$7, password_hash=$8 WHERE id=$9 RETURNING id, nom, prenom, poste, email, telephone, role, statut";
-      params = [nom, prenom, poste, email, telephone, role, statut, hash, req.params.id];
+      params = [nom, prenom, poste, email, telephone, roleValide, statut, hash, req.params.id];
     } else {
       query = "UPDATE employees SET nom=$1, prenom=$2, poste=$3, email=$4, telephone=$5, role=$6, statut=$7 WHERE id=$8 RETURNING id, nom, prenom, poste, email, telephone, role, statut";
-      params = [nom, prenom, poste, email, telephone, role, statut, req.params.id];
+      params = [nom, prenom, poste, email, telephone, roleValide, statut, req.params.id];
     }
     const result = await pool.query(query, params);
     res.json(result.rows[0]);
