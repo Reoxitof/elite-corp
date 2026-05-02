@@ -527,7 +527,7 @@ app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "login.ht
 app.get("/dashboard", (req, res) => res.sendFile(path.join(__dirname, "public", "dashboard.html")));
 app.get("*", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 initDB().then(() => {
   app.listen(PORT, "0.0.0.0", () => console.log(`[Elite Corp] Serveur démarré sur le port ${PORT}`));
 });
