@@ -7,6 +7,45 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ─── MODE FALLBACK (sans PostgreSQL) ─────────────────────────────────────────
+let dbMode = "postgres"; // "postgres" ou "memory"
+
+// Données en mémoire pour le mode fallback
+const memDB = {
+  employees: [],
+  presences: [],
+  evenements: [],
+  annonces: [],
+  commandes: [],
+  _nextId: { employees: 1, presences: 1, evenements: 1, annonces: 1, commandes: 1 }
+};
+
+function memNextId(table) {
+  return memDB._nextId[table]++;
+}
+
+function initMemDB() {
+  const adminPass = process.env.ADMIN_PASSWORD || "elitecorp2026";
+  const hash = crypto.createHash("sha256").update(adminPass).digest("hex");
+  memDB.employees.push({
+    id: memNextId("employees"),
+    nom: "Admin", prenom: "Elite Corp", poste: "Directeur Général",
+    email: "admin@elitecorp.fr", telephone: null,
+    role: "admin", password_hash: hash, statut: "actif",
+    date_embauche: new Date().toISOString().split("T")[0],
+    created_at: new Date().toISOString()
+  });
+  console.log("[MEM] Mode mémoire activé — admin@elitecorp.fr /", adminPass);
+}
+
+// Wrapper DB : redirige vers mémoire si postgres KO
+const db = {
+  async query(sql, params = []) {
+    if (dbMode === "memory") throw new Error("USE_MEM");
+    return pool.query(sql, params);
+  }
+};
+
 // Simple in-memory session store
 const sessions = new Map();
 
@@ -54,11 +93,15 @@ const pool = new Pool({
   database: process.env.PG_DB || "mydb",
   user: process.env.PG_USER || "postgres",
   password: process.env.PG_PASSWORD || "",
-  ssl: false
+  ssl: false,
+  connectionTimeoutMillis: 5000
 });
 
 async function initDB() {
   try {
+    // Test de connexion rapide
+    await pool.query("SELECT 1");
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS employees (
         id SERIAL PRIMARY KEY,
@@ -146,10 +189,12 @@ async function initDB() {
       console.log("[DB] Admin créé — mot de passe:", adminPass);
     }
 
-    console.log("[DB] Base de données initialisée");
+    console.log("[DB] PostgreSQL initialisé");
   } catch (e) {
-    console.log("[DB] Erreur init:", e.message);
-    console.log("[DB] Mode démo sans base de données activé");
+    console.log("[DB] PostgreSQL inaccessible:", e.message);
+    console.log("[DB] ⚡ Basculement en mode mémoire");
+    dbMode = "memory";
+    initMemDB();
   }
 }
 
@@ -161,12 +206,19 @@ app.post("/api/login", async (req, res) => {
 
   try {
     const hash = crypto.createHash("sha256").update(password).digest("hex");
-    const result = await pool.query(
-      "SELECT id, nom, prenom, poste, role, statut FROM employees WHERE email=$1 AND password_hash=$2",
-      [email, hash]
-    );
-    if (result.rows.length === 0) return res.status(401).json({ error: "Identifiants incorrects" });
-    const emp = result.rows[0];
+    let emp;
+
+    if (dbMode === "memory") {
+      emp = memDB.employees.find(e => e.email === email && e.password_hash === hash) || null;
+    } else {
+      const result = await pool.query(
+        "SELECT id, nom, prenom, poste, role, statut FROM employees WHERE email=$1 AND password_hash=$2",
+        [email, hash]
+      );
+      emp = result.rows[0] || null;
+    }
+
+    if (!emp) return res.status(401).json({ error: "Identifiants incorrects" });
     if (emp.statut !== "actif") return res.status(403).json({ error: "Compte désactivé" });
 
     const sid = generateSessionId();
@@ -196,6 +248,9 @@ app.get("/api/employees/role/:role", requireAuth, async (req, res) => {
   const role = req.params.role;
   if (!VALID_ROLES.includes(role)) return res.status(400).json({ error: `Rôle invalide. Valeurs acceptées : ${VALID_ROLES.join(", ")}` });
   try {
+    if (dbMode === "memory") {
+      return res.json(memDB.employees.filter(e => e.role === role && e.statut === "actif").map(safeEmp));
+    }
     const result = await pool.query(
       "SELECT id, nom, prenom, poste, email, telephone, role, statut, date_embauche FROM employees WHERE role=$1 AND statut='actif' ORDER BY nom, prenom",
       [role]
@@ -208,6 +263,9 @@ app.get("/api/employees/role/:role", requireAuth, async (req, res) => {
 
 app.get("/api/employees", requireAuth, async (req, res) => {
   try {
+    if (dbMode === "memory") {
+      return res.json(memDB.employees.map(safeEmp));
+    }
     const result = await pool.query(
       "SELECT id, nom, prenom, poste, email, telephone, role, statut, date_embauche FROM employees ORDER BY nom, prenom"
     );
@@ -217,12 +275,21 @@ app.get("/api/employees", requireAuth, async (req, res) => {
   }
 });
 
+function safeEmp(e) {
+  return { id: e.id, nom: e.nom, prenom: e.prenom, poste: e.poste, email: e.email, telephone: e.telephone, role: e.role, statut: e.statut, date_embauche: e.date_embauche };
+}
+
 app.post("/api/employees", requireAdmin, async (req, res) => {
   const { nom, prenom, poste, email, telephone, role, password } = req.body;
   if (!nom || !prenom || !poste) return res.status(400).json({ error: "Champs obligatoires manquants" });
   const roleValide = VALID_ROLES.includes(role) ? role : "user";
   try {
     const hash = password ? crypto.createHash("sha256").update(password).digest("hex") : null;
+    if (dbMode === "memory") {
+      const emp = { id: memNextId("employees"), nom, prenom, poste, email: email||null, telephone: telephone||null, role: roleValide, password_hash: hash, statut: "actif", date_embauche: new Date().toISOString().split("T")[0], created_at: new Date().toISOString() };
+      memDB.employees.push(emp);
+      return res.json(safeEmp(emp));
+    }
     const result = await pool.query(
       "INSERT INTO employees (nom, prenom, poste, email, telephone, role, password_hash) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, nom, prenom, poste, email, telephone, role, statut",
       [nom, prenom, poste, email || null, telephone || null, roleValide, hash]
@@ -238,6 +305,12 @@ app.put("/api/employees/:id/role", requireAdmin, async (req, res) => {
   const { role } = req.body;
   if (!VALID_ROLES.includes(role)) return res.status(400).json({ error: `Rôle invalide. Valeurs acceptées : ${VALID_ROLES.join(", ")}` });
   try {
+    if (dbMode === "memory") {
+      const emp = memDB.employees.find(e => e.id == req.params.id);
+      if (!emp) return res.status(404).json({ error: "Employé introuvable" });
+      emp.role = role;
+      return res.json(safeEmp(emp));
+    }
     const result = await pool.query(
       "UPDATE employees SET role=$1 WHERE id=$2 RETURNING id, nom, prenom, poste, role, statut",
       [role, req.params.id]
@@ -253,6 +326,13 @@ app.put("/api/employees/:id", requireAdmin, async (req, res) => {
   const { nom, prenom, poste, email, telephone, role, statut, password } = req.body;
   const roleValide = VALID_ROLES.includes(role) ? role : "user";
   try {
+    if (dbMode === "memory") {
+      const emp = memDB.employees.find(e => e.id == req.params.id);
+      if (!emp) return res.status(404).json({ error: "Employé introuvable" });
+      Object.assign(emp, { nom, prenom, poste, email, telephone, role: roleValide, statut });
+      if (password) emp.password_hash = crypto.createHash("sha256").update(password).digest("hex");
+      return res.json(safeEmp(emp));
+    }
     let query, params;
     if (password) {
       const hash = crypto.createHash("sha256").update(password).digest("hex");
@@ -271,6 +351,11 @@ app.put("/api/employees/:id", requireAdmin, async (req, res) => {
 
 app.delete("/api/employees/:id", requireAdmin, async (req, res) => {
   try {
+    if (dbMode === "memory") {
+      const emp = memDB.employees.find(e => e.id == req.params.id);
+      if (emp) emp.statut = "inactif";
+      return res.json({ success: true });
+    }
     await pool.query("UPDATE employees SET statut='inactif' WHERE id=$1", [req.params.id]);
     res.json({ success: true });
   } catch (e) {
@@ -283,6 +368,13 @@ app.delete("/api/employees/:id", requireAdmin, async (req, res) => {
 app.get("/api/presences", requireAuth, async (req, res) => {
   const date = req.query.date || new Date().toISOString().split("T")[0];
   try {
+    if (dbMode === "memory") {
+      const rows = memDB.employees.filter(e => e.statut === "actif").map(e => {
+        const p = memDB.presences.find(p => p.employee_id === e.id && p.date === date);
+        return { id: p?.id||null, employee_id: e.id, nom: e.nom, prenom: e.prenom, poste: e.poste, date, heure_arrivee: p?.heure_arrivee||null, heure_depart: p?.heure_depart||null, statut: p?.statut||"absent", note: p?.note||null };
+      });
+      return res.json(rows);
+    }
     const result = await pool.query(`
       SELECT p.id, p.employee_id, e.nom, e.prenom, e.poste,
              p.date, p.heure_arrivee, p.heure_depart, p.statut, p.note
@@ -303,20 +395,30 @@ app.post("/api/presences/pointer", requireAuth, async (req, res) => {
   const now = new Date().toTimeString().split(" ")[0];
 
   try {
+    if (dbMode === "memory") {
+      const existing = memDB.presences.find(p => p.employee_id === empId && p.date === today);
+      if (!existing) {
+        memDB.presences.push({ id: memNextId("presences"), employee_id: empId, date: today, heure_arrivee: now, heure_depart: null, statut: "present", note: null });
+        return res.json({ action: "arrivee", heure: now });
+      } else if (!existing.heure_depart) {
+        existing.heure_depart = now;
+        return res.json({ action: "depart", heure: now });
+      } else {
+        return res.json({ action: "deja_pointe", heure_arrivee: existing.heure_arrivee, heure_depart: existing.heure_depart });
+      }
+    }
     const existing = await pool.query(
       "SELECT * FROM presences WHERE employee_id=$1 AND date=$2",
       [empId, today]
     );
 
     if (existing.rows.length === 0) {
-      // Pointer arrivée
       await pool.query(
         "INSERT INTO presences (employee_id, date, heure_arrivee, statut) VALUES ($1,$2,$3,'present') ON CONFLICT (employee_id, date) DO UPDATE SET heure_arrivee=$3, statut='present'",
         [empId, today, now]
       );
       res.json({ action: "arrivee", heure: now });
     } else if (!existing.rows[0].heure_depart) {
-      // Pointer départ
       await pool.query(
         "UPDATE presences SET heure_depart=$1 WHERE employee_id=$2 AND date=$3",
         [now, empId, today]
@@ -333,6 +435,9 @@ app.post("/api/presences/pointer", requireAuth, async (req, res) => {
 app.get("/api/presences/me", requireAuth, async (req, res) => {
   const today = new Date().toISOString().split("T")[0];
   try {
+    if (dbMode === "memory") {
+      return res.json(memDB.presences.find(p => p.employee_id === req.session.id && p.date === today) || null);
+    }
     const result = await pool.query(
       "SELECT * FROM presences WHERE employee_id=$1 AND date=$2",
       [req.session.id, today]
@@ -346,6 +451,12 @@ app.get("/api/presences/me", requireAuth, async (req, res) => {
 app.put("/api/presences/:id", requireAdmin, async (req, res) => {
   const { statut, heure_arrivee, heure_depart, note } = req.body;
   try {
+    if (dbMode === "memory") {
+      const p = memDB.presences.find(p => p.id == req.params.id);
+      if (!p) return res.status(404).json({ error: "Présence introuvable" });
+      Object.assign(p, { statut, heure_arrivee: heure_arrivee||null, heure_depart: heure_depart||null, note: note||null });
+      return res.json(p);
+    }
     const result = await pool.query(
       "UPDATE presences SET statut=$1, heure_arrivee=$2, heure_depart=$3, note=$4 WHERE id=$5 RETURNING *",
       [statut, heure_arrivee || null, heure_depart || null, note || null, req.params.id]
@@ -361,6 +472,11 @@ app.put("/api/presences/:id", requireAdmin, async (req, res) => {
 app.get("/api/evenements", requireAuth, async (req, res) => {
   const { mois, annee } = req.query;
   try {
+    if (dbMode === "memory") {
+      let rows = memDB.evenements;
+      if (mois && annee) rows = rows.filter(e => { const d = new Date(e.date); return d.getMonth()+1 == mois && d.getFullYear() == annee; });
+      return res.json(rows.map(e => ({ ...e, createur: "Admin Elite Corp" })));
+    }
     let query = `
       SELECT ev.*, e.nom || ' ' || e.prenom as createur
       FROM evenements ev
@@ -383,6 +499,11 @@ app.post("/api/evenements", requireAdmin, async (req, res) => {
   const { titre, description, date, heure_debut, heure_fin, lieu, type } = req.body;
   if (!titre || !date) return res.status(400).json({ error: "Titre et date requis" });
   try {
+    if (dbMode === "memory") {
+      const ev = { id: memNextId("evenements"), titre, description: description||null, date, heure_debut: heure_debut||null, heure_fin: heure_fin||null, lieu: lieu||null, type: type||"general", created_by: req.session.id, created_at: new Date().toISOString() };
+      memDB.evenements.push(ev);
+      return res.json(ev);
+    }
     const result = await pool.query(
       "INSERT INTO evenements (titre, description, date, heure_debut, heure_fin, lieu, type, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
       [titre, description || null, date, heure_debut || null, heure_fin || null, lieu || null, type || "general", req.session.id]
@@ -395,6 +516,10 @@ app.post("/api/evenements", requireAdmin, async (req, res) => {
 
 app.delete("/api/evenements/:id", requireAdmin, async (req, res) => {
   try {
+    if (dbMode === "memory") {
+      memDB.evenements = memDB.evenements.filter(e => e.id != req.params.id);
+      return res.json({ success: true });
+    }
     await pool.query("DELETE FROM evenements WHERE id=$1", [req.params.id]);
     res.json({ success: true });
   } catch (e) {
@@ -406,6 +531,9 @@ app.delete("/api/evenements/:id", requireAdmin, async (req, res) => {
 
 app.get("/api/annonces", requireAuth, async (req, res) => {
   try {
+    if (dbMode === "memory") {
+      return res.json(memDB.annonces.map(a => ({ ...a, auteur: "Admin Elite Corp" })).reverse());
+    }
     const result = await pool.query(`
       SELECT a.*, e.nom || ' ' || e.prenom as auteur
       FROM annonces a
@@ -422,6 +550,11 @@ app.post("/api/annonces", requireAdmin, async (req, res) => {
   const { titre, contenu, priorite } = req.body;
   if (!titre || !contenu) return res.status(400).json({ error: "Titre et contenu requis" });
   try {
+    if (dbMode === "memory") {
+      const a = { id: memNextId("annonces"), titre, contenu, priorite: priorite||"normale", created_by: req.session.id, created_at: new Date().toISOString() };
+      memDB.annonces.push(a);
+      return res.json(a);
+    }
     const result = await pool.query(
       "INSERT INTO annonces (titre, contenu, priorite, created_by) VALUES ($1,$2,$3,$4) RETURNING *",
       [titre, contenu, priorite || "normale", req.session.id]
@@ -434,6 +567,10 @@ app.post("/api/annonces", requireAdmin, async (req, res) => {
 
 app.delete("/api/annonces/:id", requireAdmin, async (req, res) => {
   try {
+    if (dbMode === "memory") {
+      memDB.annonces = memDB.annonces.filter(a => a.id != req.params.id);
+      return res.json({ success: true });
+    }
     await pool.query("DELETE FROM annonces WHERE id=$1", [req.params.id]);
     res.json({ success: true });
   } catch (e) {
@@ -446,6 +583,14 @@ app.delete("/api/annonces/:id", requireAdmin, async (req, res) => {
 app.get("/api/stats", requireAuth, async (req, res) => {
   const today = new Date().toISOString().split("T")[0];
   try {
+    if (dbMode === "memory") {
+      return res.json({
+        employes: memDB.employees.filter(e => e.statut === "actif").length,
+        presents: memDB.presences.filter(p => p.date === today && p.statut === "present").length,
+        evenements: memDB.evenements.filter(e => e.date >= today).length,
+        annonces: memDB.annonces.length
+      });
+    }
     const [empCount, presentCount, evCount, annCount] = await Promise.all([
       pool.query("SELECT COUNT(*) FROM employees WHERE statut='actif'"),
       pool.query("SELECT COUNT(*) FROM presences WHERE date=$1 AND statut='present'", [today]),
@@ -467,6 +612,9 @@ app.get("/api/stats", requireAuth, async (req, res) => {
 
 app.get("/api/commandes", requireAuth, async (req, res) => {
   try {
+    if (dbMode === "memory") {
+      return res.json(memDB.commandes.map(c => ({ ...c, createur: "Admin Elite Corp" })).reverse());
+    }
     const result = await pool.query(`
       SELECT c.*, e.nom || ' ' || e.prenom as createur
       FROM commandes c
@@ -483,6 +631,11 @@ app.post("/api/commandes", requireAdmin, async (req, res) => {
   const { client_nom, description, montant, priorite, date_prestation, heure_debut, heure_fin, lieu } = req.body;
   if (!client_nom || !description) return res.status(400).json({ error: "Client et description requis" });
   try {
+    if (dbMode === "memory") {
+      const c = { id: memNextId("commandes"), client_nom, description, montant: montant||null, priorite: priorite||"normale", statut: "devis", date_prestation: date_prestation||null, heure_debut: heure_debut||null, heure_fin: heure_fin||null, lieu: lieu||null, evenement_id: null, created_by: req.session.id, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+      memDB.commandes.push(c);
+      return res.json(c);
+    }
     const result = await pool.query(
       `INSERT INTO commandes (client_nom, description, montant, priorite, date_prestation, heure_debut, heure_fin, lieu, statut, created_by)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'devis',$9) RETURNING *`,
@@ -501,14 +654,27 @@ app.put("/api/commandes/:id/statut", requireAdmin, async (req, res) => {
   if (!validStatuts.includes(statut)) return res.status(400).json({ error: "Statut invalide" });
 
   try {
-    // Récupérer la commande actuelle
+    if (dbMode === "memory") {
+      const cmd = memDB.commandes.find(c => c.id == req.params.id);
+      if (!cmd) return res.status(404).json({ error: "Commande introuvable" });
+      let evenement_cree = false;
+      if (statut === "confirme" && !cmd.evenement_id) {
+        const ev = { id: memNextId("evenements"), titre: `📋 ${cmd.client_nom} — ${cmd.description.substring(0,50)}`, description: `Prestation confirmée\nClient : ${cmd.client_nom}`, date: cmd.date_prestation || new Date().toISOString().split("T")[0], heure_debut: cmd.heure_debut||null, heure_fin: cmd.heure_fin||null, lieu: cmd.lieu||null, type: "prestation", created_by: req.session.id, created_at: new Date().toISOString() };
+        memDB.evenements.push(ev);
+        cmd.evenement_id = ev.id;
+        evenement_cree = true;
+      }
+      cmd.statut = statut;
+      cmd.updated_at = new Date().toISOString();
+      return res.json({ commande: cmd, evenement_cree });
+    }
+
     const cmdRes = await pool.query("SELECT * FROM commandes WHERE id=$1", [req.params.id]);
     if (cmdRes.rows.length === 0) return res.status(404).json({ error: "Commande introuvable" });
     const cmd = cmdRes.rows[0];
 
     let evenement_id = cmd.evenement_id;
 
-    // Si passage à "confirmé" → créer automatiquement un événement dans le calendrier
     if (statut === "confirme" && !cmd.evenement_id) {
       const dateEv = cmd.date_prestation || new Date().toISOString().split("T")[0];
       const evRes = await pool.query(
@@ -540,6 +706,12 @@ app.put("/api/commandes/:id/statut", requireAdmin, async (req, res) => {
 app.put("/api/commandes/:id", requireAdmin, async (req, res) => {
   const { client_nom, description, montant, priorite, date_prestation, heure_debut, heure_fin, lieu } = req.body;
   try {
+    if (dbMode === "memory") {
+      const cmd = memDB.commandes.find(c => c.id == req.params.id);
+      if (!cmd) return res.status(404).json({ error: "Commande introuvable" });
+      Object.assign(cmd, { client_nom, description, montant: montant||null, priorite: priorite||"normale", date_prestation: date_prestation||null, heure_debut: heure_debut||null, heure_fin: heure_fin||null, lieu: lieu||null, updated_at: new Date().toISOString() });
+      return res.json(cmd);
+    }
     const result = await pool.query(
       `UPDATE commandes SET client_nom=$1, description=$2, montant=$3, priorite=$4,
        date_prestation=$5, heure_debut=$6, heure_fin=$7, lieu=$8, updated_at=NOW()
@@ -555,6 +727,10 @@ app.put("/api/commandes/:id", requireAdmin, async (req, res) => {
 
 app.delete("/api/commandes/:id", requireAdmin, async (req, res) => {
   try {
+    if (dbMode === "memory") {
+      memDB.commandes = memDB.commandes.filter(c => c.id != req.params.id);
+      return res.json({ success: true });
+    }
     await pool.query("DELETE FROM commandes WHERE id=$1", [req.params.id]);
     res.json({ success: true });
   } catch (err) {
