@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Elite Corp. — Panel de Gestion</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<style>
+:root{--gold:#c9a84c;--gold-light:#f0d080;--gold-dim:#8a6f2e;--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:rgba(201,168,76,0.25);--white:#f0ead8;--white-dim:#9a9080;--sidebar:260px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;display:flex;min-height:100vh}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:50px}
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--border)}
+.sidebar-logo .logo-text{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:5px;color:var(--gold);text-shadow:0 0 20px rgba(201,168,76,0.3)}
+.sidebar-logo .logo-sub{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--white-dim);margin-top:4px}
+.sidebar-nav{flex:1;padding:16px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;cursor:pointer;color:var(--white-dim);font-size:13px;font-weight:600;letter-spacing:0.5px;transition:all 0.2s;border-left:3px solid transparent}
+.nav-item:hover{color:var(--white);background:rgba(201,168,76,0.06)}
+.nav-item.active{color:var(--gold);background:rgba(201,168,76,0.1);border-left-color:var(--gold)}
+.nav-item i{width:18px;text-align:center;font-size:14px}
+.sidebar-footer{padding:16px 24px;border-top:1px solid var(--border)}
+.user-info{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Anton',sans-serif;font-size:14px;color:#000;flex-shrink:0}
+.user-name{font-size:13px;font-weight:700;color:var(--white)}
+.user-role{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.btn-logout{width:100%;padding:9px;background:rgba(229,62,62,0.1);border:1px solid rgba(229,62,62,0.25);border-radius:8px;color:#fc8181;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-logout:hover{background:rgba(229,62,62,0.2)}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-y:auto}
+.topbar{padding:20px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--card);position:sticky;top:0;z-index:50}
+.topbar-title{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:3px;color:var(--white)}
+.topbar-right{font-size:12px;color:var(--white-dim)}
+.topbar-right span{color:var(--gold);font-weight:700}
+.content{padding:28px 32px;flex:1}
+.section{display:none}.section.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.stat-icon{width:40px;height:40px;border-radius:10px;background:rgba(201,168,76,0.12);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:16px;margin-bottom:14px}
+.stat-value{font-family:'Anton',sans-serif;font-size:32px;color:var(--white);letter-spacing:2px}
+.stat-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--white-dim);margin-top:4px}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.table-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.table-header h3{font-family:'Anton',sans-serif;font-size:15px;letter-spacing:2px;color:var(--white)}
+table{width:100%;border-collapse:collapse}
+th{padding:12px 16px;text-align:left;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--white-dim);border-bottom:1px solid var(--border)}
+td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(201,168,76,0.08)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(201,168,76,0.04)}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.badge-admin{background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.3)}
+.badge-user{background:rgba(99,179,237,0.12);color:#63b3ed;border:1px solid rgba(99,179,237,0.25)}
+.badge-interimaire{background:rgba(154,122,208,0.12);color:#b794f4;border:1px solid rgba(154,122,208,0.25)}
+.badge-actif{background:rgba(56,161,105,0.12);color:#68d391;border:1px solid rgba(56,161,105,0.25)}
+.badge-inactif{background:rgba(229,62,62,0.12);color:#fc8181;border:1px solid rgba(229,62,62,0.25)}
+.badge-present{background:rgba(56,161,105,0.12);color:#68d391;border:1px solid rgba(56,161,105,0.25)}
+.badge-absent{background:rgba(229,62,62,0.12);color:#fc8181;border:1px solid rgba(229,62,62,0.25)}
+.badge-devis{background:rgba(99,179,237,0.12);color:#63b3ed;border:1px solid rgba(99,179,237,0.25)}
+.badge-confirme{background:rgba(56,161,105,0.12);color:#68d391;border:1px solid rgba(56,161,105,0.25)}
+.badge-en_cours{background:rgba(237,137,54,0.12);color:#f6ad55;border:1px solid rgba(237,137,54,0.25)}
+.badge-termine{background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.3)}
+.badge-haute{background:rgba(229,62,62,0.12);color:#fc8181;border:1px solid rgba(229,62,62,0.25)}
+.badge-normale{background:rgba(99,179,237,0.12);color:#63b3ed;border:1px solid rgba(99,179,237,0.25)}
+.badge-basse{background:rgba(154,122,208,0.12);color:#b794f4;border:1px solid rgba(154,122,208,0.25)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;border:none;transition:all 0.2s}
+.btn-gold{background:linear-gradient(135deg,var(--gold-dim),var(--gold));color:#000}
+.btn-gold:hover{box-shadow:0 4px 16px rgba(201,168,76,0.35);transform:translateY(-1px)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-danger{background:rgba(229,62,62,0.15);color:#fc8181;border:1px solid rgba(229,62,62,0.3)}
+.btn-danger:hover{background:rgba(229,62,62,0.25)}
+.btn-ghost{background:rgba(201,168,76,0.08);color:var(--gold);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(201,168,76,0.15)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;width:min(500px,92vw);position:relative;overflow:hidden;max-height:90vh;overflow-y:auto}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.modal h3{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:3px;margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--white-dim);margin-bottom:7px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold)}
+.form-group select option{background:var(--card)}
+.form-group textarea{resize:vertical;min-height:80px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.annonce-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px;position:relative}
+.annonce-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.annonce-title{font-weight:800;font-size:15px;margin-bottom:6px}
+.annonce-content{font-size:13px;color:var(--white-dim);line-height:1.6;margin-bottom:10px}
+.annonce-meta{font-size:11px;color:var(--white-dim);display:flex;align-items:center;gap:12px}
+.cal-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day-name{text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;color:var(--white-dim);padding:8px 0;text-transform:uppercase}
+.cal-day{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;min-height:70px;font-size:12px}
+.cal-day.today{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.cal-day.other-month{opacity:0.3}
+.cal-day-num{font-weight:700;margin-bottom:4px}
+.cal-event{background:rgba(201,168,76,0.15);color:var(--gold);border-radius:4px;padding:2px 5px;font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pointer-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.empty{text-align:center;padding:40px;color:var(--white-dim);font-size:13px}
+.empty i{font-size:32px;color:var(--gold-dim);margin-bottom:12px;display:block}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">ELITE CORP.</div>
+    <div class="logo-sub">Système de gestion interne</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" data-section="dashboard"><i class="fas fa-chart-line"></i> Tableau de bord</div>
+    <div class="nav-item" data-section="employes"><i class="fas fa-users"></i> Employés</div>
+    <div class="nav-item" data-section="presences"><i class="fas fa-clock"></i> Présences</div>
+    <div class="nav-item" data-section="calendrier"><i class="fas fa-calendar-alt"></i> Calendrier</div>
+    <div class="nav-item" data-section="commandes"><i class="fas fa-file-invoice"></i> Commandes</div>
+    <div class="nav-item" data-section="annonces"><i class="fas fa-bullhorn"></i> Annonces</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div>
+        <div class="user-name" id="userName">Chargement...</div>
+        <div class="user-role" id="userRole">—</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+  </div>
+</aside>
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">TABLEAU DE BORD</div>
+    <div class="topbar-right">Bienvenue, <span id="topbarUser">—</span></div>
+  </div>
+  <div class="content">
+    <div class="section active" id="sec-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-value" id="stat-employes">—</div><div class="stat-label">Employés actifs</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-user-check"></i></div><div class="stat-value" id="stat-presents">—</div><div class="stat-label">Présents aujourd'hui</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-check"></i></div><div class="stat-value" id="stat-evenements">—</div><div class="stat-label">Événements à venir</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-bullhorn"></i></div><div class="stat-value" id="stat-annonces">—</div><div class="stat-label">Annonces</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>DERNIÈRES ANNONCES</h3></div>
+        <div id="dash-annonces" style="padding:16px"></div>
+      </div>
+    </div>
+    <div class="section" id="sec-employes">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>LISTE DES EMPLOYÉS</h3>
+          <button class="btn btn-gold admin-only" onclick="openModal('modal-emp')"><i class="fas fa-plus"></i> Ajouter</button>
+        </div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Nom</th><th>Prénom</th><th>Poste</th><th>Email</th><th>Rôle</th><th>Statut</th><th class="admin-only">Actions</th></tr></thead><tbody id="emp-tbody"></tbody></table></div>
+      </div>
+    </div>
+    <div class="section" id="sec-presences">
+      <div class="pointer-section">
+        <div>
+          <div style="font-weight:800;font-size:15px;margin-bottom:4px">Pointage du jour</div>
+          <div style="font-size:12px;color:var(--white-dim)" id="pointer-status">Chargement...</div>
+        </div>
+        <button class="btn btn-gold" onclick="pointer()"><i class="fas fa-fingerprint"></i> Pointer</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>PRÉSENCES</h3>
+          <input type="date" id="presence-date" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--white);font-size:12px" onchange="loadPresences()"/>
+        </div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Nom</th><th>Prénom</th><th>Poste</th><th>Arrivée</th><th>Départ</th><th>Statut</th></tr></thead><tbody id="pres-tbody"></tbody></table></div>
+      </div>
+    </div>
+    <div class="section" id="sec-calendrier">
+      <div class="table-wrap" style="padding:24px">
+        <div class="cal-header">
+          <button class="btn btn-ghost btn-sm" onclick="calPrev()"><i class="fas fa-chevron-left"></i></button>
+          <h3 id="cal-title" style="font-family:'Anton',sans-serif;letter-spacing:3px;font-size:16px"></h3>
+          <button class="btn btn-ghost btn-sm" onclick="calNext()"><i class="fas fa-chevron-right"></i></button>
+          <button class="btn btn-gold btn-sm admin-only" onclick="openModal('modal-ev')" style="margin-left:auto"><i class="fas fa-plus"></i> Événement</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+    <div class="section" id="sec-commandes">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>COMMANDES</h3>
+          <button class="btn btn-gold admin-only" onclick="openModal('modal-cmd')"><i class="fas fa-plus"></i> Nouvelle commande</button>
+        </div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Client</th><th>Description</th><th>Montant</th><th>Priorité</th><th>Statut</th><th>Date</th><th class="admin-only">Actions</th></tr></thead><tbody id="cmd-tbody"></tbody></table></div>
+      </div>
+    </div>
+    <div class="section" id="sec-annonces">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-gold admin-only" onclick="openModal('modal-ann')"><i class="fas fa-plus"></i> Nouvelle annonce</button>
+      </div>
+      <div id="ann-list"></div>
+    </div>
+  </div>
+</main>
+<div class="modal-overlay" id="modal-emp">
+  <div class="modal">
+    <h3>AJOUTER UN EMPLOYÉ</h3>
+    <div class="form-group"><label>Nom</label><input id="emp-nom" placeholder="Dupont"/></div>
+    <div class="form-group"><label>Prénom</label><input id="emp-prenom" placeholder="Jean"/></div>
+    <div class="form-group"><label>Poste</label><input id="emp-poste" placeholder="Technicien"/></div>
+    <div class="form-group"><label>Email</label><input id="emp-email" type="email" placeholder="jean@elitecorp.fr"/></div>
+    <div class="form-group"><label>Téléphone</label><input id="emp-tel" placeholder="06..."/></div>
+    <div class="form-group"><label>Rôle</label><select id="emp-role"><option value="user">Employé</option><option value="admin">Admin</option><option value="interimaire">Intérimaire</option></select></div>
+    <div class="form-group"><label>Mot de passe</label><input id="emp-pass" type="password" placeholder="••••••••"/></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-emp')">Annuler</button><button class="btn btn-gold" onclick="addEmployee()">Ajouter</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-ev">
+  <div class="modal">
+    <h3>NOUVEL ÉVÉNEMENT</h3>
+    <div class="form-group"><label>Titre</label><input id="ev-titre" placeholder="Réunion d'équipe"/></div>
+    <div class="form-group"><label>Description</label><textarea id="ev-desc" placeholder="Détails..."></textarea></div>
+    <div class="form-group"><label>Date</label><input id="ev-date" type="date"/></div>
+    <div class="form-group"><label>Heure début</label><input id="ev-hdebut" type="time"/></div>
+    <div class="form-group"><label>Heure fin</label><input id="ev-hfin" type="time"/></div>
+    <div class="form-group"><label>Lieu</label><input id="ev-lieu" placeholder="Salle A"/></div>
+    <div class="form-group"><label>Type</label><select id="ev-type"><option value="general">Général</option><option value="reunion">Réunion</option><option value="prestation">Prestation</option><option value="formation">Formation</option></select></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-ev')">Annuler</button><button class="btn btn-gold" onclick="addEvenement()">Créer</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-cmd">
+  <div class="modal">
+    <h3>NOUVELLE COMMANDE</h3>
+    <div class="form-group"><label>Client</label><input id="cmd-client" placeholder="Nom du client"/></div>
+    <div class="form-group"><label>Description</label><textarea id="cmd-desc" placeholder="Détails..."></textarea></div>
+    <div class="form-group"><label>Montant (€)</label><input id="cmd-montant" type="number" placeholder="0.00"/></div>
+    <div class="form-group"><label>Priorité</label><select id="cmd-priorite"><option value="normale">Normale</option><option value="haute">Haute</option><option value="basse">Basse</option></select></div>
+    <div class="form-group"><label>Date prestation</label><input id="cmd-date" type="date"/></div>
+    <div class="form-group"><label>Heure début</label><input id="cmd-hdebut" type="time"/></div>
+    <div class="form-group"><label>Heure fin</label><input id="cmd-hfin" type="time"/></div>
+    <div class="form-group"><label>Lieu</label><input id="cmd-lieu" placeholder="Adresse..."/></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-cmd')">Annuler</button><button class="btn btn-gold" onclick="addCommande()">Créer</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-ann">
+  <div class="modal">
+    <h3>NOUVELLE ANNONCE</h3>
+    <div class="form-group"><label>Titre</label><input id="ann-titre" placeholder="Titre de l'annonce"/></div>
+    <div class="form-group"><label>Contenu</label><textarea id="ann-contenu" placeholder="Message..."></textarea></div>
+    <div class="form-group"><label>Priorité</label><select id="ann-priorite"><option value="normale">Normale</option><option value="haute">Haute</option><option value="basse">Basse</option></select></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-ann')">Annuler</button><button class="btn btn-gold" onclick="addAnnonce()">Publier</button></div>
+  </div>
+</div>
+<script>
+let currentUser=null,calYear=new Date().getFullYear(),calMonth=new Date().getMonth()+1,calEvents=[];
+const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+async function init(){
+  try{
+    const r=await fetch('/api/me',{credentials:'include'});
+    const d=await r.json();
+    if(!d||!d.id)return window.location.href='/';
+    currentUser=d;
+    const ini=(d.nom?.[0]||'')+(d.prenom?.[0]||'');
+    document.getElementById('userAvatar').textContent=ini||'U';
+    document.getElementById('userName').textContent=d.prenom+' '+d.nom;
+    document.getElementById('userRole').textContent=d.role==='admin'?'Administrateur':d.role==='interimaire'?'Intérimaire':'Employé';
+    document.getElementById('topbarUser').textContent=d.prenom+' '+d.nom;
+    if(d.role!=='admin')document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
+    loadDashboard();
+  }catch(e){window.location.href='/';}
+}
+
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    item.classList.add('active');
+    const sec=item.dataset.section;
+    document.getElementById('sec-'+sec).classList.add('active');
+    const titles={dashboard:'TABLEAU DE BORD',employes:'EMPLOYÉS',presences:'PRÉSENCES',calendrier:'CALENDRIER',commandes:'COMMANDES',annonces:'ANNONCES'};
+    document.getElementById('topbarTitle').textContent=titles[sec]||sec.toUpperCase();
+    if(sec==='dashboard')loadDashboard();
+    else if(sec==='employes')loadEmployes();
+    else if(sec==='presences')loadPresences();
+    else if(sec==='calendrier')loadCalendrier();
+    else if(sec==='commandes')loadCommandes();
+    else if(sec==='annonces')loadAnnonces();
+  });
+});
+
+function badge(val,map){const cls=map[val]||'badge-normale';return `<span class="badge ${cls}">${val}</span>`;}
+const roleMap={'admin':'badge-admin','user':'badge-user','interimaire':'badge-interimaire'};
+const statutMap={'actif':'badge-actif','inactif':'badge-inactif','present':'badge-present','absent':'badge-absent'};
+const cmdStatutMap={'devis':'badge-devis','confirme':'badge-confirme','en_cours':'badge-en_cours','termine':'badge-termine'};
+const prioMap={'haute':'badge-haute','normale':'badge-normale','basse':'badge-basse'};
+
+function fmt(v){return v?v.substring(0,5):'—';}
+function fmtDate(v){if(!v)return'—';const d=new Date(v);return d.toLocaleDateString('fr-FR');}
+
+async function loadDashboard(){
+  try{
+    const[stats,anns]=await Promise.all([
+      fetch('/api/stats',{credentials:'include'}).then(r=>r.json()),
+      fetch('/api/annonces',{credentials:'include'}).then(r=>r.json())
+    ]);
+    document.getElementById('stat-employes').textContent=stats.employes??'—';
+    document.getElementById('stat-presents').textContent=stats.presents??'—';
+    document.getElementById('stat-evenements').textContent=stats.evenements??'—';
+    document.getElementById('stat-annonces').textContent=stats.annonces??'—';
+    const el=document.getElementById('dash-annonces');
+    if(!anns.length){el.innerHTML='<div class="empty"><i class="fas fa-bullhorn"></i>Aucune annonce</div>';return;}
+    el.innerHTML=anns.slice(0,3).map(a=>`
+      <div class="annonce-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="annonce-title">${a.titre}</div>
+          ${badge(a.priorite,prioMap)}
+        </div>
+        <div class="annonce-content">${a.contenu}</div>
+        <div class="annonce-meta"><i class="fas fa-user"></i>${a.auteur||'—'} &nbsp;·&nbsp; <i class="fas fa-clock"></i>${fmtDate(a.created_at)}</div>
+      </div>`).join('');
+  }catch(e){console.error(e);}
+}
+
+async function loadEmployes(){
+  try{
+    const emps=await fetch('/api/employees',{credentials:'include'}).then(r=>r.json());
+    const tb=document.getElementById('emp-tbody');
+    if(!emps.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fas fa-users"></i>Aucun employé</div></td></tr>';return;}
+    tb.innerHTML=emps.map(e=>`<tr>
+      <td><strong>${e.nom}</strong></td><td>${e.prenom}</td><td>${e.poste}</td>
+      <td>${e.email||'—'}</td><td>${badge(e.role,roleMap)}</td><td>${badge(e.statut,statutMap)}</td>
+      <td class="admin-only" style="display:${currentUser?.role==='admin'?'':'none'}">
+        <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${e.id})"><i class="fas fa-trash"></i></button>
+      </td></tr>`).join('');
+  }catch(e){console.error(e);}
+}
+
+async function loadPresences(){
+  const dateEl=document.getElementById('presence-date');
+  if(!dateEl.value)dateEl.value=new Date().toISOString().split('T')[0];
+  try{
+    const rows=await fetch('/api/presences?date='+dateEl.value,{credentials:'include'}).then(r=>r.json());
+    const tb=document.getElementById('pres-tbody');
+    if(!rows.length){tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fas fa-clock"></i>Aucune donnée</div></td></tr>';return;}
+    tb.innerHTML=rows.map(p=>`<tr>
+      <td><strong>${p.nom}</strong></td><td>${p.prenom}</td><td>${p.poste}</td>
+      <td>${fmt(p.heure_arrivee)}</td><td>${fmt(p.heure_depart)}</td>
+      <td>${badge(p.statut||'absent',statutMap)}</td></tr>`).join('');
+    loadPointerStatus();
+  }catch(e){console.error(e);}
+}
+
+async function loadPointerStatus(){
+  try{
+    const p=await fetch('/api/presences/me',{credentials:'include'}).then(r=>r.json());
+    const el=document.getElementById('pointer-status');
+    if(!p)el.textContent='Pas encore pointé aujourd\'hui';
+    else if(p.heure_arrivee&&!p.heure_depart)el.textContent='Arrivée pointée à '+fmt(p.heure_arrivee)+' — Cliquez pour pointer le départ';
+    else if(p.heure_arrivee&&p.heure_depart)el.textContent='Arrivée '+fmt(p.heure_arrivee)+' · Départ '+fmt(p.heure_depart);
+  }catch(e){}
+}
+
+async function pointer(){
+  try{
+    const r=await fetch('/api/presences/pointer',{method:'POST',credentials:'include'});
+    const d=await r.json();
+    loadPresences();
+  }catch(e){alert('Erreur pointage');}
+}
+
+async function loadCalendrier(){
+  document.getElementById('cal-title').textContent=MONTHS[calMonth-1]+' '+calYear;
+  try{
+    calEvents=await fetch('/api/evenements?mois='+calMonth+'&annee='+calYear,{credentials:'include'}).then(r=>r.json());
+    renderCal();
+  }catch(e){renderCal();}
+}
+
+function renderCal(){
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML=DAYS.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  const first=new Date(calYear,calMonth-1,1);
+  const last=new Date(calYear,calMonth,0);
+  const today=new Date().toISOString().split('T')[0];
+  let startDay=(first.getDay()+6)%7;
+  for(let i=0;i<startDay;i++){
+    const d=new Date(calYear,calMonth-1,-startDay+i+1);
+    grid.innerHTML+=`<div class="cal-day other-month"><div class="cal-day-num">${d.getDate()}</div></div>`;
+  }
+  for(let d=1;d<=last.getDate();d++){
+    const dateStr=calYear+'-'+String(calMonth).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const isToday=dateStr===today;
+    const evs=calEvents.filter(e=>e.date&&e.date.startsWith(dateStr));
+    grid.innerHTML+=`<div class="cal-day${isToday?' today':''}">
+      <div class="cal-day-num">${d}</div>
+      ${evs.map(e=>`<div class="cal-event" title="${e.titre}">${e.titre}</div>`).join('')}
+    </div>`;
+  }
+  const remaining=(7-((startDay+last.getDate())%7))%7;
+  for(let i=1;i<=remaining;i++)grid.innerHTML+=`<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
+}
+
+function calPrev(){calMonth--;if(calMonth<1){calMonth=12;calYear--;}loadCalendrier();}
+function calNext(){calMonth++;if(calMonth>12){calMonth=1;calYear++;}loadCalendrier();}
+
+async function loadCommandes(){
+  try{
+    const cmds=await fetch('/api/commandes',{credentials:'include'}).then(r=>r.json());
+    const tb=document.getElementById('cmd-tbody');
+    if(!cmds.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fas fa-file-invoice"></i>Aucune commande</div></td></tr>';return;}
+    tb.innerHTML=cmds.map(c=>`<tr>
+      <td><strong>${c.client_nom}</strong></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.description}</td>
+      <td>${c.montant?c.montant+'€':'—'}</td>
+      <td>${badge(c.priorite,prioMap)}</td>
+      <td>${badge(c.statut,cmdStatutMap)}</td>
+      <td>${fmtDate(c.date_prestation)}</td>
+      <td class="admin-only" style="display:${currentUser?.role==='admin'?'':'none'}">
+        <select class="btn btn-ghost btn-sm" onchange="changeStatutCmd(${c.id},this.value)" style="cursor:pointer">
+          ${['devis','confirme','en_cours','termine'].map(s=>`<option value="${s}"${c.statut===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+        <button class="btn btn-danger btn-sm" onclick="deleteCmd(${c.id})"><i class="fas fa-trash"></i></button>
+      </td></tr>`).join('');
+  }catch(e){console.error(e);}
+}
+
+async function loadAnnonces(){
+  try{
+    const anns=await fetch('/api/annonces',{credentials:'include'}).then(r=>r.json());
+    const el=document.getElementById('ann-list');
+    if(!anns.length){el.innerHTML='<div class="empty"><i class="fas fa-bullhorn"></i>Aucune annonce</div>';return;}
+    el.innerHTML=anns.map(a=>`
+      <div class="annonce-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="annonce-title">${a.titre}</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            ${badge(a.priorite,prioMap)}
+            ${currentUser?.role==='admin'?`<button class="btn btn-danger btn-sm" onclick="deleteAnnonce(${a.id})"><i class="fas fa-trash"></i></button>`:''}
+          </div>
+        </div>
+        <div class="annonce-content">${a.contenu}</div>
+        <div class="annonce-meta"><i class="fas fa-user"></i>${a.auteur||'—'} &nbsp;·&nbsp; <i class="fas fa-clock"></i>${fmtDate(a.created_at)}</div>
+      </div>`).join('');
+  }catch(e){console.error(e);}
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+async function addEmployee(){
+  const body={nom:document.getElementById('emp-nom').value,prenom:document.getElementById('emp-prenom').value,poste:document.getElementById('emp-poste').value,email:document.getElementById('emp-email').value,telephone:document.getElementById('emp-tel').value,role:document.getElementById('emp-role').value,password:document.getElementById('emp-pass').value};
+  if(!body.nom||!body.prenom||!body.poste)return alert('Nom, prénom et poste requis');
+  try{
+    const r=await fetch('/api/employees',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    if(r.ok){closeModal('modal-emp');loadEmployes();}else{const d=await r.json();alert(d.error||'Erreur');}
+  }catch(e){alert('Erreur serveur');}
+}
+
+async function deleteEmployee(id){
+  if(!confirm('Désactiver cet employé ?'))return;
+  await fetch('/api/employees/'+id,{method:'DELETE',credentials:'include'});
+  loadEmployes();
+}
+
+async function addEvenement(){
+  const body={titre:document.getElementById('ev-titre').value,description:document.getElementById('ev-desc').value,date:document.getElementById('ev-date').value,heure_debut:document.getElementById('ev-hdebut').value,heure_fin:document.getElementById('ev-hfin').value,lieu:document.getElementById('ev-lieu').value,type:document.getElementById('ev-type').value};
+  if(!body.titre||!body.date)return alert('Titre et date requis');
+  try{
+    const r=await fetch('/api/evenements',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    if(r.ok){closeModal('modal-ev');loadCalendrier();}else{const d=await r.json();alert(d.error||'Erreur');}
+  }catch(e){alert('Erreur serveur');}
+}
+
+async function addCommande(){
+  const body={client_nom:document.getElementById('cmd-client').value,description:document.getElementById('cmd-desc').value,montant:document.getElementById('cmd-montant').value,priorite:document.getElementById('cmd-priorite').value,date_prestation:document.getElementById('cmd-date').value,heure_debut:document.getElementById('cmd-hdebut').value,heure_fin:document.getElementById('cmd-hfin').value,lieu:document.getElementById('cmd-lieu').value};
+  if(!body.client_nom||!body.description)return alert('Client et description requis');
+  try{
+    const r=await fetch('/api/commandes',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    if(r.ok){closeModal('modal-cmd');loadCommandes();}else{const d=await r.json();alert(d.error||'Erreur');}
+  }catch(e){alert('Erreur serveur');}
+}
+
+async function changeStatutCmd(id,statut){
+  await fetch('/api/commandes/'+id+'/statut',{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({statut})});
+  loadCommandes();
+}
+
+async function deleteCmd(id){
+  if(!confirm('Supprimer cette commande ?'))return;
+  await fetch('/api/commandes/'+id,{method:'DELETE',credentials:'include'});
+  loadCommandes();
+}
+
+async function addAnnonce(){
+  const body={titre:document.getElementById('ann-titre').value,contenu:document.getElementById('ann-contenu').value,priorite:document.getElementById('ann-priorite').value};
+  if(!body.titre||!body.contenu)return alert('Titre et contenu requis');
+  try{
+    const r=await fetch('/api/annonces',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    if(r.ok){closeModal('modal-ann');loadAnnonces();}else{const d=await r.json();alert(d.error||'Erreur');}
+  }catch(e){alert('Erreur serveur');}
+}
+
+async function deleteAnnonce(id){
+  if(!confirm('Supprimer cette annonce ?'))return;
+  await fetch('/api/annonces/'+id,{method:'DELETE',credentials:'include'});
+  loadAnnonces();
+}
+
+async function logout(){
+  await fetch('/api/logout',{method:'POST',credentials:'include'});
+  window.location.href='/';
+}
+
+init();
+</script>
+</body>
+</html>
