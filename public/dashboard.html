@@ -254,6 +254,9 @@ const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 // Helper fetch — injecte x-session-id depuis localStorage pour CEF FiveM
 function apiFetch(url, opts) {
   opts = opts || {};
+  // Récupérer sid depuis URL ?sid= ou localStorage
+  var urlSid = new URLSearchParams(window.location.search).get('sid');
+  if (urlSid) localStorage.setItem('ec_sid', urlSid);
   var sid = localStorage.getItem('ec_sid');
   var headers = opts.headers ? Object.assign({}, opts.headers) : {};
   if (sid) headers['x-session-id'] = sid;
@@ -266,7 +269,7 @@ async function init(){
   try{
     const r=await apiapiapiFetch('/api/me');
     const d=await r.json();
-    if(!d||!d.id)return window.location.href='/';
+    if(!d||!d.id)return window.location.href='/login';
     currentUser=d;
     const ini=(d.nom?.[0]||'')+(d.prenom?.[0]||'');
     document.getElementById('userAvatar').textContent=ini||'U';
@@ -275,7 +278,7 @@ async function init(){
     document.getElementById('topbarUser').textContent=d.prenom+' '+d.nom;
     if(d.role!=='admin')document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
     loadDashboard();
-  }catch(e){window.location.href='/';}
+  }catch(e){window.location.href='/login';}
 }
 
 document.querySelectorAll('.nav-item').forEach(item=>{
@@ -517,7 +520,7 @@ async function deleteAnnonce(id){
 
 async function logout(){
   await apiapiFetch('/api/logout',{method:'POST',credentials:'include'});
-  window.location.href='/';
+  window.location.href='/login';
 }
 
 init();

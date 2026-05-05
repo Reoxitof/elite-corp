@@ -178,7 +178,9 @@
             if (data.sessionId) {
               localStorage.setItem('ec_sid', data.sessionId);
             }
-            window.location.href = '/dashboard';
+            // Passer le sid dans l'URL au cas où localStorage ne persiste pas entre pages (CEF)
+            var sid = data.sessionId || '';
+            window.location.href = sid ? '/dashboard?sid=' + sid : '/dashboard';
           } else {
             errMsg.textContent = data.error || 'Identifiants incorrects';
             errMsg.classList.add('show');
