@@ -4,15 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Connexion — Elite Corp.</title>
-  <!-- Polices en non-bloquant -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet"/></noscript>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'"/>
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/></noscript>
-  <!-- Fond immédiat pour éviter l'écran blanc/noir pendant le chargement -->
-  <style>html,body{background:#0a0a0f;}</style>
   <style>
     :root {
       --gold: #c9a84c;
@@ -26,62 +17,34 @@
       --white-dim: #9a9080;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+    html, body {
       background: var(--bg);
       color: var(--white);
-      font-family: 'Inter', sans-serif;
+      font-family: Arial, sans-serif;
+    }
+    body {
       min-height: 100vh;
-      overflow-x: hidden;
-      overflow-y: auto;
-      position: relative;
+      padding: 40px 20px;
     }
-    html { min-height: 100%; }
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
-      background-size: 50px 50px;
-      pointer-events: none;
-    }
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.12), transparent 60%);
-      pointer-events: none;
-    }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 50px; }
-
     .login-wrap {
-      position: relative;
-      z-index: 1;
       width: 100%;
-      max-width: 440px;
-      padding: 20px;
+      max-width: 420px;
       margin: 0 auto;
-      padding-top: max(40px, 8vh);
-      padding-bottom: 40px;
     }
     .login-logo {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 36px;
     }
-    .login-logo .logo-text {
-      font-family: 'Anton', sans-serif;
-      font-size: 36px;
+    .logo-text {
+      font-size: 32px;
+      font-weight: 900;
       letter-spacing: 8px;
       color: var(--gold);
-      text-shadow: 0 0 40px rgba(201,168,76,0.4);
     }
-    .login-logo .logo-sub {
-      font-size: 10px;
+    .logo-sub {
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 4px;
+      letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--white-dim);
       margin-top: 6px;
@@ -89,33 +52,33 @@
     .login-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px 36px;
+      border-radius: 16px;
+      padding: 36px 28px;
       position: relative;
-      overflow: hidden;
     }
     .login-card::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 3px;
+      border-radius: 16px 16px 0 0;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
     .login-card h2 {
-      font-family: 'Anton', sans-serif;
-      font-size: 22px;
+      font-size: 20px;
+      font-weight: 900;
       letter-spacing: 3px;
       color: var(--white);
       margin-bottom: 6px;
+      text-transform: uppercase;
     }
     .login-card p {
       font-size: 12px;
       color: var(--white-dim);
-      margin-bottom: 32px;
-      letter-spacing: 0.5px;
+      margin-bottom: 28px;
     }
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
     .form-group label {
       display: block;
@@ -126,32 +89,20 @@
       color: var(--white-dim);
       margin-bottom: 8px;
     }
-    .form-group .input-wrap {
-      position: relative;
-    }
-    .form-group .input-wrap i {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--gold-dim);
-      font-size: 14px;
-    }
     .form-group input {
       width: 100%;
-      padding: 13px 14px 13px 40px;
+      padding: 13px 14px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
       color: var(--white);
-      font-family: 'Inter', sans-serif;
       font-size: 14px;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
     }
     .form-group input:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
     }
     .form-group input::placeholder { color: var(--white-dim); opacity: 0.5; }
     .btn-login {
@@ -161,26 +112,16 @@
       border: none;
       border-radius: 10px;
       color: #000;
-      font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 8px 24px rgba(201,168,76,0.3);
       margin-top: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      -webkit-appearance: none;
+      appearance: none;
     }
-    .btn-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(201,168,76,0.45);
-    }
-    .btn-login:active { transform: translateY(0); }
-    .btn-login.loading { opacity: 0.7; pointer-events: none; }
+    .btn-login:active { opacity: 0.8; }
     .error-msg {
       background: rgba(220,50,50,0.12);
       border: 1px solid rgba(220,50,50,0.3);
@@ -190,13 +131,11 @@
       color: #ff6b6b;
       margin-top: 16px;
       display: none;
-      align-items: center;
-      gap: 8px;
     }
-    .error-msg.show { display: flex; }
+    .error-msg.show { display: block; }
     .login-footer {
       text-align: center;
-      margin-top: 28px;
+      margin-top: 24px;
       font-size: 10px;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -217,26 +156,14 @@
       <form id="loginForm">
         <div class="form-group">
           <label>Adresse email</label>
-          <div class="input-wrap">
-            <i class="fas fa-envelope"></i>
-            <input type="email" id="email" placeholder="votre@email.com" required autocomplete="email"/>
-          </div>
+          <input type="email" id="email" placeholder="votre@email.com" required autocomplete="email"/>
         </div>
         <div class="form-group">
           <label>Mot de passe</label>
-          <div class="input-wrap">
-            <i class="fas fa-lock"></i>
-            <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password"/>
-          </div>
+          <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password"/>
         </div>
-        <button type="submit" class="btn-login" id="loginBtn">
-          <i class="fas fa-sign-in-alt"></i>
-          SE CONNECTER
-        </button>
-        <div class="error-msg" id="errorMsg">
-          <i class="fas fa-exclamation-circle"></i>
-          <span id="errorText">Identifiants incorrects</span>
-        </div>
+        <button type="submit" class="btn-login" id="loginBtn">SE CONNECTER</button>
+        <div class="error-msg" id="errorMsg"></div>
       </form>
     </div>
     <div class="login-footer">
@@ -245,18 +172,17 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const btn = document.getElementById('loginBtn');
-      const errMsg = document.getElementById('errorMsg');
-      const errText = document.getElementById('errorText');
+      var btn = document.getElementById('loginBtn');
+      var errMsg = document.getElementById('errorMsg');
 
-      btn.classList.add('loading');
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONNEXION...';
+      btn.textContent = 'CONNEXION...';
+      btn.disabled = true;
       errMsg.classList.remove('show');
 
       try {
-        const res = await fetch('/api/login', {
+        var res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -265,20 +191,20 @@
             password: document.getElementById('password').value
           })
         });
-        const data = await res.json();
+        var data = await res.json();
         if (res.ok && data.success) {
           window.location.href = '/dashboard';
         } else {
-          errText.textContent = data.error || 'Identifiants incorrects';
+          errMsg.textContent = data.error || 'Identifiants incorrects';
           errMsg.classList.add('show');
-          btn.classList.remove('loading');
-          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> SE CONNECTER';
+          btn.textContent = 'SE CONNECTER';
+          btn.disabled = false;
         }
       } catch (err) {
-        errText.textContent = 'Erreur de connexion au serveur';
+        errMsg.textContent = 'Erreur de connexion au serveur';
         errMsg.classList.add('show');
-        btn.classList.remove('loading');
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> SE CONNECTER';
+        btn.textContent = 'SE CONNECTER';
+        btn.disabled = false;
       }
     });
   </script>
