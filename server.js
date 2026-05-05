@@ -95,6 +95,10 @@ app.use((req, res, next) => {
   } else {
     req.session = null;
     req.sessionId = null;
+    // Log pour debug CEF
+    if (req.path.startsWith('/api/') && req.path !== '/api/login') {
+      console.log('[SESSION] MISS path=' + req.path + ' sid=' + (sid ? sid.substring(0,8)+'...' : 'NONE') + ' sessions=' + sessions.size);
+    }
   }
   next();
 });
@@ -257,7 +261,8 @@ app.post("/api/login", async (req, res) => {
     const sid = generateSessionId();
     const sessionData = { id: emp.id, nom: emp.nom, prenom: emp.prenom, poste: emp.poste, role: emp.role };
     sessions.set(sid, sessionData);
-    dbSaveSession(sid, sessionData); // persistance DB (fire-and-forget)
+    dbSaveSession(sid, sessionData);
+    console.log('[LOGIN] OK user=' + emp.email + ' sid=' + sid.substring(0,8) + '... sessions=' + sessions.size);
     res.setHeader("Set-Cookie", `sid=${sid}; Path=/; HttpOnly; SameSite=Lax`);
     res.json({ success: true, sessionId: sid, user: { id: emp.id, nom: emp.nom, prenom: emp.prenom, poste: emp.poste, role: emp.role } });
   } catch (e) {
