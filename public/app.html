@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Elite Corp.</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#0a0a0f;color:#f0ead8;font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+
+/* ── LOGIN ── */
+#view-login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px}
+.login-wrap{width:100%;max-width:420px}
+.logo-text{text-align:center;font-size:32px;font-weight:900;letter-spacing:8px;color:#c9a84c;margin-bottom:6px}
+.logo-sub{text-align:center;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#9a9080;margin-bottom:36px}
+.login-card{background:#16161f;border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:36px 28px;position:relative}
+.gold-line{height:3px;background:linear-gradient(90deg,transparent,#c9a84c,transparent);border-radius:16px 16px 0 0;margin:-36px -28px 28px -28px}
+.login-card h2{font-size:20px;font-weight:900;letter-spacing:3px;color:#f0ead8;margin-bottom:6px;text-transform:uppercase}
+.login-card p{font-size:12px;color:#9a9080;margin-bottom:28px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#9a9080;margin-bottom:8px}
+.form-group input{width:100%;padding:13px 14px;background:#111118;border:1px solid rgba(201,168,76,0.25);border-radius:10px;color:#f0ead8;font-size:14px;font-family:Arial,sans-serif;outline:none}
+.form-group input:focus{border-color:#c9a84c}
+.btn-login{width:100%;padding:15px;background:#c9a84c;border:none;border-radius:10px;color:#000;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:8px;font-family:Arial,sans-serif}
+.btn-login:active{opacity:0.8}
+.error-msg{background:rgba(220,50,50,0.15);border:1px solid rgba(220,50,50,0.35);border-radius:8px;padding:12px 16px;font-size:12px;color:#ff6b6b;margin-top:16px;display:none}
+.error-msg.show{display:block}
+
+/* ── DASHBOARD ── */
+#view-dashboard{display:none}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#0a0a0f}::-webkit-scrollbar-thumb{background:#8a6f2e;border-radius:50px}
+.sidebar{width:260px;min-height:100vh;background:#16161f;border-right:1px solid rgba(201,168,76,0.25);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(201,168,76,0.25)}
+.sidebar-logo .logo-text2{font-size:22px;font-weight:900;letter-spacing:5px;color:#c9a84c;margin-bottom:0}
+.sidebar-logo .logo-sub2{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#9a9080;margin-top:4px}
+.sidebar-nav{flex:1;padding:16px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;cursor:pointer;color:#9a9080;font-size:13px;font-weight:600;border-left:3px solid transparent}
+.nav-item:hover{color:#f0ead8;background:rgba(201,168,76,0.06)}
+.nav-item.active{color:#c9a84c;background:rgba(201,168,76,0.1);border-left-color:#c9a84c}
+.sidebar-footer{padding:16px 24px;border-top:1px solid rgba(201,168,76,0.25)}
+.user-info{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8a6f2e,#c9a84c);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#000;flex-shrink:0}
+.user-name{font-size:13px;font-weight:700;color:#f0ead8}
+.user-role{font-size:10px;color:#c9a84c;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.btn-logout{width:100%;padding:9px;background:rgba(229,62,62,0.1);border:1px solid rgba(229,62,62,0.25);border-radius:8px;color:#fc8181;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:Arial,sans-serif}
+.main{margin-left:260px;flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-y:auto}
+.topbar{padding:20px 32px;border-bottom:1px solid rgba(201,168,76,0.25);display:flex;align-items:center;justify-content:space-between;background:#16161f;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:20px;font-weight:900;letter-spacing:3px;color:#f0ead8}
+.topbar-right{font-size:12px;color:#9a9080}
+.topbar-right span{color:#c9a84c;font-weight:700}
+.content{padding:28px 32px;flex:1}
+.section{display:none}.section.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:#16161f;border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#c9a84c,transparent)}
+.stat-value{font-size:32px;font-weight:900;color:#f0ead8;letter-spacing:2px}
+.stat-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#9a9080;margin-top:4px}
+.table-wrap{background:#16161f;border:1px solid rgba(201,168,76,0.25);border-radius:14px;overflow:hidden}
+.table-header{padding:18px 24px;border-bottom:1px solid rgba(201,168,76,0.25);display:flex;align-items:center;justify-content:space-between}
+.table-header h3{font-size:15px;font-weight:900;letter-spacing:2px;color:#f0ead8}
+table{width:100%;border-collapse:collapse}
+th{padding:12px 16px;text-align:left;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#9a9080;border-bottom:1px solid rgba(201,168,76,0.25)}
+td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(201,168,76,0.08)}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.badge-admin{background:rgba(201,168,76,0.15);color:#c9a84c;border:1px solid rgba(201,168,76,0.3)}
+.badge-user{background:rgba(99,179,237,0.12);color:#63b3ed;border:1px solid rgba(99,179,237,0.25)}
+.badge-interimaire{background:rgba(154,122,208,0.12);color:#b794f4;border:1px solid rgba(154,122,208,0.25)}
+.badge-actif{background:rgba(56,161,105,0.12);color:#68d391;border:1px solid rgba(56,161,105,0.25)}
+.badge-inactif{background:rgba(229,62,62,0.12);color:#fc8181;border:1px solid rgba(229,62,62,0.25)}
+.badge-present{background:rgba(56,161,105,0.12);color:#68d391;border:1px solid rgba(56,161,105,0.25)}
+.badge-absent{background:rgba(229,62,62,0.12);color:#fc8181;border:1px solid rgba(229,62,62,0.25)}
+.badge-devis{background:rgba(99,179,237,0.12);color:#63b3ed;border:1px solid rgba(99,179,237,0.25)}
+.badge-confirme{background:rgba(56,161,105,0.12);color:#68d391;border:1px solid rgba(56,161,105,0.25)}
+.badge-en_cours{background:rgba(237,137,54,0.12);color:#f6ad55;border:1px solid rgba(237,137,54,0.25)}
+.badge-termine{background:rgba(201,168,76,0.15);color:#c9a84c;border:1px solid rgba(201,168,76,0.3)}
+.badge-haute{background:rgba(229,62,62,0.12);color:#fc8181;border:1px solid rgba(229,62,62,0.25)}
+.badge-normale{background:rgba(99,179,237,0.12);color:#63b3ed;border:1px solid rgba(99,179,237,0.25)}
+.badge-basse{background:rgba(154,122,208,0.12);color:#b794f4;border:1px solid rgba(154,122,208,0.25)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;border:none;font-family:Arial,sans-serif}
+.btn-gold{background:linear-gradient(135deg,#8a6f2e,#c9a84c);color:#000}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-danger{background:rgba(229,62,62,0.15);color:#fc8181;border:1px solid rgba(229,62,62,0.3)}
+.btn-ghost{background:rgba(201,168,76,0.08);color:#c9a84c;border:1px solid rgba(201,168,76,0.25)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#16161f;border:1px solid rgba(201,168,76,0.25);border-radius:18px;padding:32px;width:min(500px,92vw);max-height:90vh;overflow-y:auto;position:relative}
+.modal h3{font-size:18px;font-weight:900;letter-spacing:3px;margin-bottom:24px;color:#f0ead8}
+.modal .form-group input,.modal .form-group select,.modal .form-group textarea{width:100%;padding:11px 14px;background:#111118;border:1px solid rgba(201,168,76,0.25);border-radius:8px;color:#f0ead8;font-family:Arial,sans-serif;font-size:13px;outline:none}
+.modal .form-group select option{background:#16161f}
+.modal .form-group textarea{resize:vertical;min-height:80px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.annonce-card{background:#16161f;border:1px solid rgba(201,168,76,0.25);border-radius:12px;padding:20px;margin-bottom:12px}
+.annonce-title{font-weight:800;font-size:15px;margin-bottom:6px;color:#f0ead8}
+.annonce-content{font-size:13px;color:#9a9080;line-height:1.6;margin-bottom:10px}
+.annonce-meta{font-size:11px;color:#9a9080}
+.pointer-section{background:#16161f;border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.empty{text-align:center;padding:40px;color:#9a9080;font-size:13px}
+.cal-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day-name{text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;color:#9a9080;padding:8px 0;text-transform:uppercase}
+.cal-day{background:#111118;border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:8px;min-height:70px;font-size:12px}
+.cal-day.today{border-color:#c9a84c;background:rgba(201,168,76,0.06)}
+.cal-day.other-month{opacity:0.3}
+.cal-day-num{font-weight:700;margin-bottom:4px;color:#f0ead8}
+.cal-event{background:rgba(201,168,76,0.15);color:#c9a84c;border-radius:4px;padding:2px 5px;font-size:10px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:768px){.sidebar{width:100%;min-height:auto;position:relative}.main{margin-left:0}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ══ VUE LOGIN ══ -->
+<div id="view-login">
+  <div class="login-wrap">
+    <div class="logo-text">ELITE CORP.</div>
+    <div class="logo-sub">Système de gestion interne</div>
+    <div class="login-card">
+      <div class="gold-line"></div>
+      <h2>CONNEXION</h2>
+      <p>Accès réservé aux membres d'Elite Corp.</p>
+      <div class="form-group"><label>Adresse email</label><input type="email" id="l-email" placeholder="votre@email.com" autocomplete="email"/></div>
+      <div class="form-group"><label>Mot de passe</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn-login" id="l-btn" onclick="doLogin()">SE CONNECTER</button>
+      <div class="error-msg" id="l-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VUE DASHBOARD ══ -->
+<div id="view-dashboard">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text2">ELITE CORP.</div>
+      <div class="logo-sub2">Système de gestion interne</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-section="dashboard">&#9679; Tableau de bord</div>
+      <div class="nav-item" data-section="employes">&#9679; Employés</div>
+      <div class="nav-item" data-section="presences">&#9679; Présences</div>
+      <div class="nav-item" data-section="calendrier">&#9679; Calendrier</div>
+      <div class="nav-item" data-section="commandes">&#9679; Commandes</div>
+      <div class="nav-item" data-section="annonces">&#9679; Annonces</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div><div class="user-name" id="userName">...</div><div class="user-role" id="userRole">—</div></div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">TABLEAU DE BORD</div>
+      <div class="topbar-right">Bienvenue, <span id="topbarUser">—</span></div>
+    </div>
+    <div class="content">
+      <div class="section active" id="sec-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-value" id="stat-employes">—</div><div class="stat-label">Employés actifs</div></div>
+          <div class="stat-card"><div class="stat-value" id="stat-presents">—</div><div class="stat-label">Présents aujourd'hui</div></div>
+          <div class="stat-card"><div class="stat-value" id="stat-evenements">—</div><div class="stat-label">Événements à venir</div></div>
+          <div class="stat-card"><div class="stat-value" id="stat-annonces">—</div><div class="stat-label">Annonces</div></div>
+        </div>
+        <div class="table-wrap"><div class="table-header"><h3>DERNIÈRES ANNONCES</h3></div><div id="dash-annonces" style="padding:16px"></div></div>
+      </div>
+      <div class="section" id="sec-employes">
+        <div class="table-wrap">
+          <div class="table-header"><h3>EMPLOYÉS</h3><button class="btn btn-gold admin-only" onclick="openModal('modal-emp')">+ Ajouter</button></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Nom</th><th>Prénom</th><th>Poste</th><th>Email</th><th>Rôle</th><th>Statut</th><th class="admin-only">Actions</th></tr></thead><tbody id="emp-tbody"></tbody></table></div>
+        </div>
+      </div>
+      <div class="section" id="sec-presences">
+        <div class="pointer-section">
+          <div><div style="font-weight:800;font-size:15px;margin-bottom:4px">Pointage du jour</div><div style="font-size:12px;color:#9a9080" id="pointer-status">Chargement...</div></div>
+          <button class="btn btn-gold" onclick="doPointer()">Pointer</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header"><h3>PRÉSENCES</h3><input type="date" id="presence-date" style="background:#111118;border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:7px 12px;color:#f0ead8;font-size:12px" onchange="loadPresences()"/></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Nom</th><th>Prénom</th><th>Poste</th><th>Arrivée</th><th>Départ</th><th>Statut</th></tr></thead><tbody id="pres-tbody"></tbody></table></div>
+        </div>
+      </div>
+      <div class="section" id="sec-calendrier">
+        <div class="table-wrap" style="padding:24px">
+          <div class="cal-header">
+            <button class="btn btn-ghost btn-sm" onclick="calPrev()">&#8249;</button>
+            <h3 id="cal-title" style="font-size:16px;font-weight:900;letter-spacing:3px"></h3>
+            <button class="btn btn-ghost btn-sm" onclick="calNext()">&#8250;</button>
+            <button class="btn btn-gold btn-sm admin-only" onclick="openModal('modal-ev')" style="margin-left:auto">+ Événement</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+      <div class="section" id="sec-commandes">
+        <div class="table-wrap">
+          <div class="table-header"><h3>COMMANDES</h3><button class="btn btn-gold admin-only" onclick="openModal('modal-cmd')">+ Nouvelle</button></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Client</th><th>Description</th><th>Montant</th><th>Priorité</th><th>Statut</th><th>Date</th><th class="admin-only">Actions</th></tr></thead><tbody id="cmd-tbody"></tbody></table></div>
+        </div>
+      </div>
+      <div class="section" id="sec-annonces">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn btn-gold admin-only" onclick="openModal('modal-ann')">+ Annonce</button></div>
+        <div id="ann-list"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="modal-overlay" id="modal-emp"><div class="modal">
+  <h3>AJOUTER UN EMPLOYÉ</h3>
+  <div class="form-group"><label>Nom</label><input id="emp-nom" placeholder="Dupont"/></div>
+  <div class="form-group"><label>Prénom</label><input id="emp-prenom" placeholder="Jean"/></div>
+  <div class="form-group"><label>Poste</label><input id="emp-poste" placeholder="Technicien"/></div>
+  <div class="form-group"><label>Email</label><input id="emp-email" type="email"/></div>
+  <div class="form-group"><label>Téléphone</label><input id="emp-tel"/></div>
+  <div class="form-group"><label>Rôle</label><select id="emp-role"><option value="user">Employé</option><option value="admin">Admin</option><option value="interimaire">Intérimaire</option></select></div>
+  <div class="form-group"><label>Mot de passe</label><input id="emp-pass" type="password"/></div>
+  <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-emp')">Annuler</button><button class="btn btn-gold" onclick="addEmployee()">Ajouter</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-ev"><div class="modal">
+  <h3>NOUVEL ÉVÉNEMENT</h3>
+  <div class="form-group"><label>Titre</label><input id="ev-titre"/></div>
+  <div class="form-group"><label>Description</label><textarea id="ev-desc"></textarea></div>
+  <div class="form-group"><label>Date</label><input id="ev-date" type="date"/></div>
+  <div class="form-group"><label>Heure début</label><input id="ev-hdebut" type="time"/></div>
+  <div class="form-group"><label>Heure fin</label><input id="ev-hfin" type="time"/></div>
+  <div class="form-group"><label>Lieu</label><input id="ev-lieu"/></div>
+  <div class="form-group"><label>Type</label><select id="ev-type"><option value="general">Général</option><option value="reunion">Réunion</option><option value="prestation">Prestation</option></select></div>
+  <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-ev')">Annuler</button><button class="btn btn-gold" onclick="addEvenement()">Créer</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-cmd"><div class="modal">
+  <h3>NOUVELLE COMMANDE</h3>
+  <div class="form-group"><label>Client</label><input id="cmd-client"/></div>
+  <div class="form-group"><label>Description</label><textarea id="cmd-desc"></textarea></div>
+  <div class="form-group"><label>Montant (€)</label><input id="cmd-montant" type="number"/></div>
+  <div class="form-group"><label>Priorité</label><select id="cmd-priorite"><option value="normale">Normale</option><option value="haute">Haute</option><option value="basse">Basse</option></select></div>
+  <div class="form-group"><label>Date prestation</label><input id="cmd-date" type="date"/></div>
+  <div class="form-group"><label>Heure début</label><input id="cmd-hdebut" type="time"/></div>
+  <div class="form-group"><label>Heure fin</label><input id="cmd-hfin" type="time"/></div>
+  <div class="form-group"><label>Lieu</label><input id="cmd-lieu"/></div>
+  <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-cmd')">Annuler</button><button class="btn btn-gold" onclick="addCommande()">Créer</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-ann"><div class="modal">
+  <h3>NOUVELLE ANNONCE</h3>
+  <div class="form-group"><label>Titre</label><input id="ann-titre"/></div>
+  <div class="form-group"><label>Contenu</label><textarea id="ann-contenu"></textarea></div>
+  <div class="form-group"><label>Priorité</label><select id="ann-priorite"><option value="normale">Normale</option><option value="haute">Haute</option><option value="basse">Basse</option></select></div>
+  <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-ann')">Annuler</button><button class="btn btn-gold" onclick="addAnnonce()">Publier</button></div>
+</div></div>
+
+<script>
+// ══ SESSION ══
+var _sid = null;
+
+function getSid() { return _sid; }
+
+function setSid(s) {
+  _sid = s;
+  try { localStorage.setItem('ec_sid', s); } catch(e) {}
+  try { sessionStorage.setItem('ec_sid', s); } catch(e) {}
+}
+
+function apiFetch(url, opts) {
+  opts = opts || {};
+  var sid = _sid
+    || (function(){ try { return localStorage.getItem('ec_sid'); } catch(e){ return null; } })()
+    || (function(){ try { return sessionStorage.getItem('ec_sid'); } catch(e){ return null; } })();
+  var headers = opts.headers ? JSON.parse(JSON.stringify(opts.headers)) : {};
+  if (sid) headers['x-session-id'] = sid;
+  if (opts.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+  opts.headers = headers;
+  opts.credentials = 'include';
+  return fetch(url, opts);
+}
+
+// ══ VUES ══
+function showLogin() {
+  document.getElementById('view-login').style.display = 'flex';
+  document.getElementById('view-dashboard').style.display = 'none';
+}
+
+function showDashboard() {
+  document.getElementById('view-login').style.display = 'none';
+  document.getElementById('view-dashboard').style.display = 'block';
+}
+
+// ══ LOGIN ══
+function doLogin() {
+  var btn = document.getElementById('l-btn');
+  var err = document.getElementById('l-err');
+  var email = document.getElementById('l-email').value;
+  var pass = document.getElementById('l-pass').value;
+  if (!email || !pass) { err.textContent = 'Remplissez tous les champs'; err.className = 'error-msg show'; return; }
+  btn.textContent = 'CONNEXION...';
+  btn.disabled = true;
+  err.className = 'error-msg';
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/login', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.withCredentials = true;
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState !== 4) return;
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if (xhr.status === 200 && data.success) {
+        if (data.sessionId) setSid(data.sessionId);
+        loadCurrentUser();
+      } else {
+        err.textContent = data.error || 'Identifiants incorrects';
+        err.className = 'error-msg show';
+        btn.textContent = 'SE CONNECTER';
+        btn.disabled = false;
+      }
+    } catch(e) {
+      err.textContent = 'Erreur serveur';
+      err.className = 'error-msg show';
+      btn.textContent = 'SE CONNECTER';
+      btn.disabled = false;
+    }
+  };
+  xhr.send(JSON.stringify({ email: email, password: pass }));
+}
+
+// ══ CHARGER USER ══
+function loadCurrentUser() {
+  apiFetch('/api/me').then(function(r) { return r.json(); }).then(function(d) {
+    if (!d || !d.id) { showLogin(); return; }
+    currentUser = d;
+    var ini = (d.nom ? d.nom[0] : '') + (d.prenom ? d.prenom[0] : '');
+    document.getElementById('userAvatar').textContent = ini || 'U';
+    document.getElementById('userName').textContent = d.prenom + ' ' + d.nom;
+    document.getElementById('userRole').textContent = d.role === 'admin' ? 'Administrateur' : d.role === 'interimaire' ? 'Intérimaire' : 'Employé';
+    document.getElementById('topbarUser').textContent = d.prenom + ' ' + d.nom;
+    if (d.role !== 'admin') document.querySelectorAll('.admin-only').forEach(function(el) { el.style.display = 'none'; });
+    showDashboard();
+    loadDashboard();
+  }).catch(function() { showLogin(); });
+}
+
+function doLogout() {
+  apiFetch('/api/logout', { method: 'POST' }).catch(function(){});
+  _sid = null;
+  try { localStorage.removeItem('ec_sid'); } catch(e) {}
+  try { sessionStorage.removeItem('ec_sid'); } catch(e) {}
+  showLogin();
+}
+
+// ══ NAV ══
+var currentUser = null;
+var calYear = new Date().getFullYear();
+var calMonth = new Date().getMonth() + 1;
+var calEvents = [];
+var MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+var DAYS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+document.querySelectorAll('.nav-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    item.classList.add('active');
+    var sec = item.dataset.section;
+    document.getElementById('sec-' + sec).classList.add('active');
+    var titles = { dashboard:'TABLEAU DE BORD', employes:'EMPLOYÉS', presences:'PRÉSENCES', calendrier:'CALENDRIER', commandes:'COMMANDES', annonces:'ANNONCES' };
+    document.getElementById('topbarTitle').textContent = titles[sec] || sec.toUpperCase();
+    if (sec === 'dashboard') loadDashboard();
+    else if (sec === 'employes') loadEmployes();
+    else if (sec === 'presences') loadPresences();
+    else if (sec === 'calendrier') loadCalendrier();
+    else if (sec === 'commandes') loadCommandes();
+    else if (sec === 'annonces') loadAnnonces();
+  });
+});
+
+function badge(val, map) { var cls = map[val] || 'badge-normale'; return '<span class="badge ' + cls + '">' + val + '</span>'; }
+var roleMap = { admin:'badge-admin', user:'badge-user', interimaire:'badge-interimaire' };
+var statutMap = { actif:'badge-actif', inactif:'badge-inactif', present:'badge-present', absent:'badge-absent' };
+var cmdStatutMap = { devis:'badge-devis', confirme:'badge-confirme', en_cours:'badge-en_cours', termine:'badge-termine' };
+var prioMap = { haute:'badge-haute', normale:'badge-normale', basse:'badge-basse' };
+function fmt(v) { return v ? v.substring(0,5) : '—'; }
+function fmtDate(v) { if (!v) return '—'; return new Date(v).toLocaleDateString('fr-FR'); }
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ══ DATA LOADERS ══
+function loadDashboard() {
+  Promise.all([
+    apiFetch('/api/stats').then(function(r){return r.json();}),
+    apiFetch('/api/annonces').then(function(r){return r.json();})
+  ]).then(function(res) {
+    var stats = res[0]; var anns = res[1];
+    document.getElementById('stat-employes').textContent = stats.employes != null ? stats.employes : '—';
+    document.getElementById('stat-presents').textContent = stats.presents != null ? stats.presents : '—';
+    document.getElementById('stat-evenements').textContent = stats.evenements != null ? stats.evenements : '—';
+    document.getElementById('stat-annonces').textContent = stats.annonces != null ? stats.annonces : '—';
+    var el = document.getElementById('dash-annonces');
+    if (!anns || !anns.length) { el.innerHTML = '<div class="empty">Aucune annonce</div>'; return; }
+    el.innerHTML = anns.slice(0,3).map(function(a) {
+      return '<div class="annonce-card"><div class="annonce-title">' + a.titre + ' ' + badge(a.priorite, prioMap) + '</div><div class="annonce-content">' + a.contenu + '</div><div class="annonce-meta">' + (a.auteur||'—') + ' · ' + fmtDate(a.created_at) + '</div></div>';
+    }).join('');
+  }).catch(function(e) { console.error('loadDashboard', e); });
+}
+
+function loadEmployes() {
+  apiFetch('/api/employees').then(function(r){return r.json();}).then(function(emps) {
+    var tb = document.getElementById('emp-tbody');
+    if (!emps || !emps.length) { tb.innerHTML = '<tr><td colspan="7"><div class="empty">Aucun employé</div></td></tr>'; return; }
+    tb.innerHTML = emps.map(function(e) {
+      return '<tr><td><strong>' + e.nom + '</strong></td><td>' + e.prenom + '</td><td>' + e.poste + '</td><td>' + (e.email||'—') + '</td><td>' + badge(e.role,roleMap) + '</td><td>' + badge(e.statut,statutMap) + '</td><td class="admin-only"><button class="btn btn-danger btn-sm" onclick="deleteEmployee(' + e.id + ')">Suppr.</button></td></tr>';
+    }).join('');
+  }).catch(function(e){console.error(e);});
+}
+
+function loadPresences() {
+  var dateEl = document.getElementById('presence-date');
+  if (!dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
+  apiFetch('/api/presences?date=' + dateEl.value).then(function(r){return r.json();}).then(function(rows) {
+    var tb = document.getElementById('pres-tbody');
+    if (!rows || !rows.length) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Aucune donnée</div></td></tr>'; return; }
+    tb.innerHTML = rows.map(function(p) {
+      return '<tr><td><strong>' + p.nom + '</strong></td><td>' + p.prenom + '</td><td>' + p.poste + '</td><td>' + fmt(p.heure_arrivee) + '</td><td>' + fmt(p.heure_depart) + '</td><td>' + badge(p.statut||'absent',statutMap) + '</td></tr>';
+    }).join('');
+    loadPointerStatus();
+  }).catch(function(e){console.error(e);});
+}
+
+function loadPointerStatus() {
+  apiFetch('/api/presences/me').then(function(r){return r.json();}).then(function(p) {
+    var el = document.getElementById('pointer-status');
+    if (!p) el.textContent = 'Pas encore pointé aujourd\'hui';
+    else if (p.heure_arrivee && !p.heure_depart) el.textContent = 'Arrivée à ' + fmt(p.heure_arrivee) + ' — Cliquez pour pointer le départ';
+    else if (p.heure_arrivee && p.heure_depart) el.textContent = 'Arrivée ' + fmt(p.heure_arrivee) + ' · Départ ' + fmt(p.heure_depart);
+  }).catch(function(){});
+}
+
+function doPointer() {
+  apiFetch('/api/presences/pointer', { method: 'POST' }).then(function(){loadPresences();}).catch(function(){alert('Erreur pointage');});
+}
+
+function loadCalendrier() {
+  document.getElementById('cal-title').textContent = MONTHS[calMonth-1] + ' ' + calYear;
+  apiFetch('/api/evenements?mois=' + calMonth + '&annee=' + calYear).then(function(r){return r.json();}).then(function(evs) {
+    calEvents = evs || [];
+    renderCal();
+  }).catch(function(){renderCal();});
+}
+
+function renderCal() {
+  var grid = document.getElementById('cal-grid');
+  grid.innerHTML = DAYS.map(function(d){return '<div class="cal-day-name">'+d+'</div>';}).join('');
+  var first = new Date(calYear, calMonth-1, 1);
+  var last = new Date(calYear, calMonth, 0);
+  var today = new Date().toISOString().split('T')[0];
+  var startDay = (first.getDay() + 6) % 7;
+  for (var i = 0; i < startDay; i++) {
+    var d = new Date(calYear, calMonth-1, -startDay+i+1);
+    grid.innerHTML += '<div class="cal-day other-month"><div class="cal-day-num">' + d.getDate() + '</div></div>';
+  }
+  for (var d = 1; d <= last.getDate(); d++) {
+    var dateStr = calYear + '-' + String(calMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    var isToday = dateStr === today;
+    var evs = calEvents.filter(function(e){return e.date && e.date.startsWith(dateStr);});
+    grid.innerHTML += '<div class="cal-day' + (isToday?' today':'') + '"><div class="cal-day-num">' + d + '</div>' + evs.map(function(e){return '<div class="cal-event">'+e.titre+'</div>';}).join('') + '</div>';
+  }
+}
+
+function calPrev(){calMonth--;if(calMonth<1){calMonth=12;calYear--;}loadCalendrier();}
+function calNext(){calMonth++;if(calMonth>12){calMonth=1;calYear++;}loadCalendrier();}
+
+function loadCommandes() {
+  apiFetch('/api/commandes').then(function(r){return r.json();}).then(function(cmds) {
+    var tb = document.getElementById('cmd-tbody');
+    if (!cmds || !cmds.length) { tb.innerHTML = '<tr><td colspan="7"><div class="empty">Aucune commande</div></td></tr>'; return; }
+    tb.innerHTML = cmds.map(function(c) {
+      return '<tr><td><strong>' + c.client_nom + '</strong></td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + c.description + '</td><td>' + (c.montant?c.montant+'€':'—') + '</td><td>' + badge(c.priorite,prioMap) + '</td><td>' + badge(c.statut,cmdStatutMap) + '</td><td>' + fmtDate(c.date_prestation) + '</td><td class="admin-only"><button class="btn btn-danger btn-sm" onclick="deleteCmd(' + c.id + ')">Suppr.</button></td></tr>';
+    }).join('');
+  }).catch(function(e){console.error(e);});
+}
+
+function loadAnnonces() {
+  apiFetch('/api/annonces').then(function(r){return r.json();}).then(function(anns) {
+    var el = document.getElementById('ann-list');
+    if (!anns || !anns.length) { el.innerHTML = '<div class="empty">Aucune annonce</div>'; return; }
+    el.innerHTML = anns.map(function(a) {
+      return '<div class="annonce-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="annonce-title">' + a.titre + '</div>' + badge(a.priorite,prioMap) + '</div><div class="annonce-content">' + a.contenu + '</div><div class="annonce-meta">' + (a.auteur||'—') + ' · ' + fmtDate(a.created_at) + (currentUser&&currentUser.role==='admin'?' <button class="btn btn-danger btn-sm" onclick="deleteAnnonce('+a.id+')">Suppr.</button>':'') + '</div></div>';
+    }).join('');
+  }).catch(function(e){console.error(e);});
+}
+
+function addEmployee() {
+  var body = { nom:document.getElementById('emp-nom').value, prenom:document.getElementById('emp-prenom').value, poste:document.getElementById('emp-poste').value, email:document.getElementById('emp-email').value, telephone:document.getElementById('emp-tel').value, role:document.getElementById('emp-role').value, password:document.getElementById('emp-pass').value };
+  apiFetch('/api/employees', { method:'POST', body:JSON.stringify(body) }).then(function(){closeModal('modal-emp');loadEmployes();}).catch(function(e){alert('Erreur: '+e.message);});
+}
+
+function deleteEmployee(id) { if(!confirm('Supprimer ?'))return; apiFetch('/api/employees/'+id,{method:'DELETE'}).then(function(){loadEmployes();}).catch(function(){}); }
+
+function addEvenement() {
+  var body = { titre:document.getElementById('ev-titre').value, description:document.getElementById('ev-desc').value, date:document.getElementById('ev-date').value, heure_debut:document.getElementById('ev-hdebut').value, heure_fin:document.getElementById('ev-hfin').value, lieu:document.getElementById('ev-lieu').value, type:document.getElementById('ev-type').value };
+  apiFetch('/api/evenements', { method:'POST', body:JSON.stringify(body) }).then(function(){closeModal('modal-ev');loadCalendrier();}).catch(function(e){alert('Erreur: '+e.message);});
+}
+
+function addCommande() {
+  var body = { client_nom:document.getElementById('cmd-client').value, description:document.getElementById('cmd-desc').value, montant:document.getElementById('cmd-montant').value, priorite:document.getElementById('cmd-priorite').value, date_prestation:document.getElementById('cmd-date').value, heure_debut:document.getElementById('cmd-hdebut').value, heure_fin:document.getElementById('cmd-hfin').value, lieu:document.getElementById('cmd-lieu').value };
+  apiFetch('/api/commandes', { method:'POST', body:JSON.stringify(body) }).then(function(){closeModal('modal-cmd');loadCommandes();}).catch(function(e){alert('Erreur: '+e.message);});
+}
+
+function deleteCmd(id) { if(!confirm('Supprimer ?'))return; apiFetch('/api/commandes/'+id,{method:'DELETE'}).then(function(){loadCommandes();}).catch(function(){}); }
+
+function addAnnonce() {
+  var body = { titre:document.getElementById('ann-titre').value, contenu:document.getElementById('ann-contenu').value, priorite:document.getElementById('ann-priorite').value };
+  apiFetch('/api/annonces', { method:'POST', body:JSON.stringify(body) }).then(function(){closeModal('modal-ann');loadAnnonces();}).catch(function(e){alert('Erreur: '+e.message);});
+}
+
+function deleteAnnonce(id) { if(!confirm('Supprimer ?'))return; apiFetch('/api/annonces/'+id,{method:'DELETE'}).then(function(){loadAnnonces();}).catch(function(){}); }
+
+// ══ INIT ══
+// Essayer de restaurer la session existante, sinon afficher login
+(function() {
+  var sid = (function(){ try { return localStorage.getItem('ec_sid'); } catch(e){ return null; } })()
+         || (function(){ try { return sessionStorage.getItem('ec_sid'); } catch(e){ return null; } })();
+  if (sid) {
+    _sid = sid;
+    loadCurrentUser();
+  } else {
+    showLogin();
+  }
+})();
+
+// Enter sur les champs login
+document.getElementById('l-pass').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+document.getElementById('l-email').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>
