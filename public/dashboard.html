@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -251,9 +251,20 @@ let currentUser=null,calYear=new Date().getFullYear(),calMonth=new Date().getMon
 const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
+// Helper fetch — injecte x-session-id depuis localStorage pour CEF FiveM
+function apiFetch(url, opts) {
+  opts = opts || {};
+  var sid = localStorage.getItem('ec_sid');
+  var headers = opts.headers ? Object.assign({}, opts.headers) : {};
+  if (sid) headers['x-session-id'] = sid;
+  opts.headers = headers;
+  opts.credentials = 'include';
+  return fetch(url, opts);
+}
+
 async function init(){
   try{
-    const r=await fetch('/api/me',{credentials:'include'});
+    const r=await apiapiapiFetch('/api/me');
     const d=await r.json();
     if(!d||!d.id)return window.location.href='/';
     currentUser=d;
@@ -297,8 +308,8 @@ function fmtDate(v){if(!v)return'—';const d=new Date(v);return d.toLocaleDateS
 async function loadDashboard(){
   try{
     const[stats,anns]=await Promise.all([
-      fetch('/api/stats',{credentials:'include'}).then(r=>r.json()),
-      fetch('/api/annonces',{credentials:'include'}).then(r=>r.json())
+      apiapiFetch('/api/stats',{credentials:'include'}).then(r=>r.json()),
+      apiapiFetch('/api/annonces',{credentials:'include'}).then(r=>r.json())
     ]);
     document.getElementById('stat-employes').textContent=stats.employes??'—';
     document.getElementById('stat-presents').textContent=stats.presents??'—';
@@ -320,7 +331,7 @@ async function loadDashboard(){
 
 async function loadEmployes(){
   try{
-    const emps=await fetch('/api/employees',{credentials:'include'}).then(r=>r.json());
+    const emps=await apiapiFetch('/api/employees',{credentials:'include'}).then(r=>r.json());
     const tb=document.getElementById('emp-tbody');
     if(!emps.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fas fa-users"></i>Aucun employé</div></td></tr>';return;}
     tb.innerHTML=emps.map(e=>`<tr>
@@ -336,7 +347,7 @@ async function loadPresences(){
   const dateEl=document.getElementById('presence-date');
   if(!dateEl.value)dateEl.value=new Date().toISOString().split('T')[0];
   try{
-    const rows=await fetch('/api/presences?date='+dateEl.value,{credentials:'include'}).then(r=>r.json());
+    const rows=await apiapiFetch('/api/presences?date='+dateEl.value,{credentials:'include'}).then(r=>r.json());
     const tb=document.getElementById('pres-tbody');
     if(!rows.length){tb.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fas fa-clock"></i>Aucune donnée</div></td></tr>';return;}
     tb.innerHTML=rows.map(p=>`<tr>
@@ -349,7 +360,7 @@ async function loadPresences(){
 
 async function loadPointerStatus(){
   try{
-    const p=await fetch('/api/presences/me',{credentials:'include'}).then(r=>r.json());
+    const p=await apiapiFetch('/api/presences/me',{credentials:'include'}).then(r=>r.json());
     const el=document.getElementById('pointer-status');
     if(!p)el.textContent='Pas encore pointé aujourd\'hui';
     else if(p.heure_arrivee&&!p.heure_depart)el.textContent='Arrivée pointée à '+fmt(p.heure_arrivee)+' — Cliquez pour pointer le départ';
@@ -359,7 +370,7 @@ async function loadPointerStatus(){
 
 async function pointer(){
   try{
-    const r=await fetch('/api/presences/pointer',{method:'POST',credentials:'include'});
+    const r=await apiapiFetch('/api/presences/pointer',{method:'POST',credentials:'include'});
     const d=await r.json();
     loadPresences();
   }catch(e){alert('Erreur pointage');}
@@ -368,7 +379,7 @@ async function pointer(){
 async function loadCalendrier(){
   document.getElementById('cal-title').textContent=MONTHS[calMonth-1]+' '+calYear;
   try{
-    calEvents=await fetch('/api/evenements?mois='+calMonth+'&annee='+calYear,{credentials:'include'}).then(r=>r.json());
+    calEvents=await apiapiFetch('/api/evenements?mois='+calMonth+'&annee='+calYear,{credentials:'include'}).then(r=>r.json());
     renderCal();
   }catch(e){renderCal();}
 }
@@ -402,7 +413,7 @@ function calNext(){calMonth++;if(calMonth>12){calMonth=1;calYear++;}loadCalendri
 
 async function loadCommandes(){
   try{
-    const cmds=await fetch('/api/commandes',{credentials:'include'}).then(r=>r.json());
+    const cmds=await apiapiFetch('/api/commandes',{credentials:'include'}).then(r=>r.json());
     const tb=document.getElementById('cmd-tbody');
     if(!cmds.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><i class="fas fa-file-invoice"></i>Aucune commande</div></td></tr>';return;}
     tb.innerHTML=cmds.map(c=>`<tr>
@@ -423,7 +434,7 @@ async function loadCommandes(){
 
 async function loadAnnonces(){
   try{
-    const anns=await fetch('/api/annonces',{credentials:'include'}).then(r=>r.json());
+    const anns=await apiapiFetch('/api/annonces',{credentials:'include'}).then(r=>r.json());
     const el=document.getElementById('ann-list');
     if(!anns.length){el.innerHTML='<div class="empty"><i class="fas fa-bullhorn"></i>Aucune annonce</div>';return;}
     el.innerHTML=anns.map(a=>`
@@ -449,14 +460,14 @@ async function addEmployee(){
   const body={nom:document.getElementById('emp-nom').value,prenom:document.getElementById('emp-prenom').value,poste:document.getElementById('emp-poste').value,email:document.getElementById('emp-email').value,telephone:document.getElementById('emp-tel').value,role:document.getElementById('emp-role').value,password:document.getElementById('emp-pass').value};
   if(!body.nom||!body.prenom||!body.poste)return alert('Nom, prénom et poste requis');
   try{
-    const r=await fetch('/api/employees',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    const r=await apiapiFetch('/api/employees',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
     if(r.ok){closeModal('modal-emp');loadEmployes();}else{const d=await r.json();alert(d.error||'Erreur');}
   }catch(e){alert('Erreur serveur');}
 }
 
 async function deleteEmployee(id){
   if(!confirm('Désactiver cet employé ?'))return;
-  await fetch('/api/employees/'+id,{method:'DELETE',credentials:'include'});
+  await apiapiFetch('/api/employees/'+id,{method:'DELETE',credentials:'include'});
   loadEmployes();
 }
 
@@ -464,7 +475,7 @@ async function addEvenement(){
   const body={titre:document.getElementById('ev-titre').value,description:document.getElementById('ev-desc').value,date:document.getElementById('ev-date').value,heure_debut:document.getElementById('ev-hdebut').value,heure_fin:document.getElementById('ev-hfin').value,lieu:document.getElementById('ev-lieu').value,type:document.getElementById('ev-type').value};
   if(!body.titre||!body.date)return alert('Titre et date requis');
   try{
-    const r=await fetch('/api/evenements',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    const r=await apiapiFetch('/api/evenements',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
     if(r.ok){closeModal('modal-ev');loadCalendrier();}else{const d=await r.json();alert(d.error||'Erreur');}
   }catch(e){alert('Erreur serveur');}
 }
@@ -473,19 +484,19 @@ async function addCommande(){
   const body={client_nom:document.getElementById('cmd-client').value,description:document.getElementById('cmd-desc').value,montant:document.getElementById('cmd-montant').value,priorite:document.getElementById('cmd-priorite').value,date_prestation:document.getElementById('cmd-date').value,heure_debut:document.getElementById('cmd-hdebut').value,heure_fin:document.getElementById('cmd-hfin').value,lieu:document.getElementById('cmd-lieu').value};
   if(!body.client_nom||!body.description)return alert('Client et description requis');
   try{
-    const r=await fetch('/api/commandes',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    const r=await apiapiFetch('/api/commandes',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
     if(r.ok){closeModal('modal-cmd');loadCommandes();}else{const d=await r.json();alert(d.error||'Erreur');}
   }catch(e){alert('Erreur serveur');}
 }
 
 async function changeStatutCmd(id,statut){
-  await fetch('/api/commandes/'+id+'/statut',{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({statut})});
+  await apiapiFetch('/api/commandes/'+id+'/statut',{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({statut})});
   loadCommandes();
 }
 
 async function deleteCmd(id){
   if(!confirm('Supprimer cette commande ?'))return;
-  await fetch('/api/commandes/'+id,{method:'DELETE',credentials:'include'});
+  await apiapiFetch('/api/commandes/'+id,{method:'DELETE',credentials:'include'});
   loadCommandes();
 }
 
@@ -493,19 +504,19 @@ async function addAnnonce(){
   const body={titre:document.getElementById('ann-titre').value,contenu:document.getElementById('ann-contenu').value,priorite:document.getElementById('ann-priorite').value};
   if(!body.titre||!body.contenu)return alert('Titre et contenu requis');
   try{
-    const r=await fetch('/api/annonces',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    const r=await apiapiFetch('/api/annonces',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
     if(r.ok){closeModal('modal-ann');loadAnnonces();}else{const d=await r.json();alert(d.error||'Erreur');}
   }catch(e){alert('Erreur serveur');}
 }
 
 async function deleteAnnonce(id){
   if(!confirm('Supprimer cette annonce ?'))return;
-  await fetch('/api/annonces/'+id,{method:'DELETE',credentials:'include'});
+  await apiapiFetch('/api/annonces/'+id,{method:'DELETE',credentials:'include'});
   loadAnnonces();
 }
 
 async function logout(){
-  await fetch('/api/logout',{method:'POST',credentials:'include'});
+  await apiapiFetch('/api/logout',{method:'POST',credentials:'include'});
   window.location.href='/';
 }
 

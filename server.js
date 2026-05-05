@@ -53,9 +53,11 @@ function generateSessionId() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-// Session middleware
+// Session middleware — accepte cookie sid OU header x-session-id OU query ?sid=
 app.use((req, res, next) => {
-  const sid = req.headers["x-session-id"] || (req.headers.cookie || "").split(";").map(c => c.trim()).find(c => c.startsWith("sid="))?.split("=")[1];
+  const sid = req.headers["x-session-id"] 
+    || req.query.sid
+    || (req.headers.cookie || "").split(";").map(c => c.trim()).find(c => c.startsWith("sid="))?.split("=")[1];
   if (sid && sessions.has(sid)) {
     req.session = sessions.get(sid);
     req.sessionId = sid;
