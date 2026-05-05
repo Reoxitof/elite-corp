@@ -5,26 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Connexion — Elite Corp.</title>
   <style>
-    :root {
-      --gold: #c9a84c;
-      --gold-light: #f0d080;
-      --gold-dim: #8a6f2e;
-      --bg: #0a0a0f;
-      --surface: #111118;
-      --card: #16161f;
-      --border: rgba(201,168,76,0.25);
-      --white: #f0ead8;
-      --white-dim: #9a9080;
-    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: Arial, sans-serif;
-    }
+    html { background: #0a0a0f; }
     body {
-      min-height: 100vh;
-      padding: 40px 20px;
+      background: #0a0a0f;
+      color: #f0ead8;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 40px 20px 40px 20px;
     }
     .login-wrap {
       width: 100%;
@@ -39,42 +26,39 @@
       font-size: 32px;
       font-weight: 900;
       letter-spacing: 8px;
-      color: var(--gold);
+      color: #c9a84c;
     }
     .logo-sub {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: var(--white-dim);
+      color: #9a9080;
       margin-top: 6px;
     }
     .login-card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: #16161f;
+      border: 1px solid rgba(201,168,76,0.25);
       border-radius: 16px;
       padding: 36px 28px;
-      position: relative;
     }
-    .login-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
+    .gold-line {
       height: 3px;
+      background: linear-gradient(90deg, transparent, #c9a84c, transparent);
       border-radius: 16px 16px 0 0;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: -36px -28px 28px -28px;
     }
     .login-card h2 {
       font-size: 20px;
       font-weight: 900;
       letter-spacing: 3px;
-      color: var(--white);
+      color: #f0ead8;
       margin-bottom: 6px;
       text-transform: uppercase;
     }
     .login-card p {
       font-size: 12px;
-      color: var(--white-dim);
+      color: #9a9080;
       margin-bottom: 28px;
     }
     .form-group {
@@ -86,45 +70,42 @@
       font-weight: 800;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: var(--white-dim);
+      color: #9a9080;
       margin-bottom: 8px;
     }
     .form-group input {
       width: 100%;
       padding: 13px 14px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: #111118;
+      border: 1px solid rgba(201,168,76,0.25);
       border-radius: 10px;
-      color: var(--white);
+      color: #f0ead8;
       font-size: 14px;
+      font-family: Arial, Helvetica, sans-serif;
       outline: none;
-      -webkit-appearance: none;
-      appearance: none;
     }
     .form-group input:focus {
-      border-color: var(--gold);
+      border-color: #c9a84c;
     }
-    .form-group input::placeholder { color: var(--white-dim); opacity: 0.5; }
     .btn-login {
       width: 100%;
       padding: 15px;
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      background: #c9a84c;
       border: none;
       border-radius: 10px;
-      color: #000;
+      color: #000000;
       font-size: 13px;
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
       cursor: pointer;
       margin-top: 8px;
-      -webkit-appearance: none;
-      appearance: none;
+      font-family: Arial, Helvetica, sans-serif;
     }
     .btn-login:active { opacity: 0.8; }
     .error-msg {
-      background: rgba(220,50,50,0.12);
-      border: 1px solid rgba(220,50,50,0.3);
+      background: rgba(220,50,50,0.15);
+      border: 1px solid rgba(220,50,50,0.35);
       border-radius: 8px;
       padding: 12px 16px;
       font-size: 12px;
@@ -139,9 +120,9 @@
       font-size: 10px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: var(--white-dim);
+      color: #9a9080;
     }
-    .login-footer span { color: var(--gold); }
+    .login-footer span { color: #c9a84c; }
   </style>
 </head>
 <body>
@@ -151,6 +132,7 @@
       <div class="logo-sub">Système de gestion interne</div>
     </div>
     <div class="login-card">
+      <div class="gold-line"></div>
       <h2>CONNEXION</h2>
       <p>Accès réservé aux membres d'Elite Corp.</p>
       <form id="loginForm">
@@ -172,40 +154,47 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       var btn = document.getElementById('loginBtn');
       var errMsg = document.getElementById('errorMsg');
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
 
       btn.textContent = 'CONNEXION...';
       btn.disabled = true;
       errMsg.classList.remove('show');
 
-      try {
-        var res = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value
-          })
-        });
-        var data = await res.json();
-        if (res.ok && data.success) {
-          window.location.href = '/dashboard';
-        } else {
-          errMsg.textContent = data.error || 'Identifiants incorrects';
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/login', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.withCredentials = true;
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        try {
+          var data = JSON.parse(xhr.responseText);
+          if (xhr.status === 200 && data.success) {
+            window.location.href = '/dashboard';
+          } else {
+            errMsg.textContent = data.error || 'Identifiants incorrects';
+            errMsg.classList.add('show');
+            btn.textContent = 'SE CONNECTER';
+            btn.disabled = false;
+          }
+        } catch(err) {
+          errMsg.textContent = 'Erreur de connexion au serveur';
           errMsg.classList.add('show');
           btn.textContent = 'SE CONNECTER';
           btn.disabled = false;
         }
-      } catch (err) {
-        errMsg.textContent = 'Erreur de connexion au serveur';
+      };
+      xhr.onerror = function() {
+        errMsg.textContent = 'Erreur réseau';
         errMsg.classList.add('show');
         btn.textContent = 'SE CONNECTER';
         btn.disabled = false;
-      }
+      };
+      xhr.send(JSON.stringify({ email: email, password: password }));
     });
   </script>
 </body>
