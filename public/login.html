@@ -31,15 +31,11 @@
       color: var(--white);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      min-height: -webkit-fill-available;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow-x: hidden;
       overflow-y: auto;
       position: relative;
     }
-    html { height: -webkit-fill-available; }
+    html { min-height: 100%; }
     body::before {
       content: '';
       position: fixed;
@@ -67,7 +63,9 @@
       width: 100%;
       max-width: 440px;
       padding: 20px;
-      margin: auto;
+      margin: 0 auto;
+      padding-top: max(40px, 8vh);
+      padding-bottom: 40px;
     }
     .login-logo {
       text-align: center;
