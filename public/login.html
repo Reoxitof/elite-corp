@@ -174,13 +174,15 @@
         try {
           var data = JSON.parse(xhr.responseText);
           if (xhr.status === 200 && data.success) {
-            // Stocker le sessionId dans localStorage pour CEF FiveM (cookies non fiables)
+            // Stocker le sessionId
             if (data.sessionId) {
               localStorage.setItem('ec_sid', data.sessionId);
+              // Aussi dans sessionStorage comme backup
+              try { sessionStorage.setItem('ec_sid', data.sessionId); } catch(e) {}
             }
-            // Passer le sid dans l'URL au cas où localStorage ne persiste pas entre pages (CEF)
             var sid = data.sessionId || '';
-            window.location.href = sid ? '/dashboard?sid=' + sid : '/dashboard';
+            // Charger le dashboard en injectant le sid dans l'URL
+            window.location.replace('/dashboard?sid=' + encodeURIComponent(sid));
           } else {
             errMsg.textContent = data.error || 'Identifiants incorrects';
             errMsg.classList.add('show');

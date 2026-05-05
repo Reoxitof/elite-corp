@@ -46,16 +46,47 @@ const db = {
   }
 };
 
-// Simple in-memory session store
+// Simple in-memory session store + PostgreSQL pour persistance
 const sessions = new Map();
 
 function generateSessionId() {
   return crypto.randomBytes(32).toString("hex");
 }
 
+// Sauvegarde session en DB (fire-and-forget)
+async function dbSaveSession(sid, data) {
+  try {
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await pool.query(
+      `INSERT INTO sessions (sid, data, expires_at) VALUES ($1,$2,$3)
+       ON CONFLICT (sid) DO UPDATE SET data=$2, expires_at=$3`,
+      [sid, JSON.stringify(data), expires]
+    );
+  } catch(e) { /* silencieux */ }
+}
+
+// Charge les sessions depuis DB au démarrage
+async function loadSessionsFromDB() {
+  try {
+    await pool.query(`CREATE TABLE IF NOT EXISTS sessions (
+      sid TEXT PRIMARY KEY,
+      data TEXT NOT NULL,
+      expires_at TIMESTAMPTZ NOT NULL
+    )`);
+    await pool.query(`DELETE FROM sessions WHERE expires_at < NOW()`);
+    const res = await pool.query(`SELECT sid, data FROM sessions WHERE expires_at > NOW()`);
+    for (const row of res.rows) {
+      try { sessions.set(row.sid, JSON.parse(row.data)); } catch(e) {}
+    }
+    console.log(`[SESSION] ${sessions.size} sessions restaurées depuis DB`);
+  } catch(e) {
+    console.log("[SESSION] Erreur chargement sessions:", e.message);
+  }
+}
+
 // Session middleware — accepte cookie sid OU header x-session-id OU query ?sid=
 app.use((req, res, next) => {
-  const sid = req.headers["x-session-id"] 
+  const sid = req.headers["x-session-id"]
     || req.query.sid
     || (req.headers.cookie || "").split(";").map(c => c.trim()).find(c => c.startsWith("sid="))?.split("=")[1];
   if (sid && sessions.has(sid)) {
@@ -224,7 +255,9 @@ app.post("/api/login", async (req, res) => {
     if (emp.statut !== "actif") return res.status(403).json({ error: "Compte désactivé" });
 
     const sid = generateSessionId();
-    sessions.set(sid, { id: emp.id, nom: emp.nom, prenom: emp.prenom, poste: emp.poste, role: emp.role });
+    const sessionData = { id: emp.id, nom: emp.nom, prenom: emp.prenom, poste: emp.poste, role: emp.role };
+    sessions.set(sid, sessionData);
+    dbSaveSession(sid, sessionData); // persistance DB (fire-and-forget)
     res.setHeader("Set-Cookie", `sid=${sid}; Path=/; HttpOnly; SameSite=Lax`);
     res.json({ success: true, sessionId: sid, user: { id: emp.id, nom: emp.nom, prenom: emp.prenom, poste: emp.poste, role: emp.role } });
   } catch (e) {
@@ -749,6 +782,7 @@ app.get("/dashboard", (req, res) => res.sendFile(path.join(__dirname, "public", 
 app.get("*", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 
 const PORT = process.env.PORT || 80;
-initDB().then(() => {
+initDB().then(async () => {
+  await loadSessionsFromDB();
   app.listen(PORT, "0.0.0.0", () => console.log(`[Elite Corp] Serveur démarré sur le port ${PORT}`));
 });

@@ -254,10 +254,15 @@ const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 // Helper fetch — injecte x-session-id depuis localStorage pour CEF FiveM
 function apiFetch(url, opts) {
   opts = opts || {};
-  // Récupérer sid depuis URL ?sid= ou localStorage
+  // Récupérer sid depuis URL ?sid= ou localStorage ou sessionStorage
   var urlSid = new URLSearchParams(window.location.search).get('sid');
-  if (urlSid) localStorage.setItem('ec_sid', urlSid);
-  var sid = localStorage.getItem('ec_sid');
+  if (urlSid) {
+    localStorage.setItem('ec_sid', urlSid);
+    try { sessionStorage.setItem('ec_sid', urlSid); } catch(e) {}
+  }
+  var sid = urlSid
+    || localStorage.getItem('ec_sid')
+    || (function(){ try { return sessionStorage.getItem('ec_sid'); } catch(e){ return null; } })();
   var headers = opts.headers ? Object.assign({}, opts.headers) : {};
   if (sid) headers['x-session-id'] = sid;
   opts.headers = headers;
